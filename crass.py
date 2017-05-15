@@ -8,15 +8,18 @@
 
 ####################### IMPORT ##################################
 import os
+import glob
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage.io import imread
 from skimage.io import imsave
+from skimage.io import imshow
 import skimage.filters.thresholding as th
 import skimage.filters as skfilters
 import skimage.transform as sktransform
 from scipy.ndimage import morphology,measurements,filters
 from scipy.ndimage.morphology import *
+import scipy.misc as misc
 
 ####################### OBJECTS ###################################
 class Line_Param():
@@ -32,6 +35,13 @@ class Image_Param():
         self.pathout = os.path.dirname(input)+"\\out\\"
         self.name = os.path.splitext(os.path.basename(input))[0]
         self.extension = os.path.splitext(os.path.basename(input))[1][1:]
+
+class Splice_Param():
+    def __init__(self, input, parts):
+        self.name = os.path.splitext(input)[0]
+        self.segment = parts[len(parts)-2]
+        self.segmenttype = parts[len(parts)-1]
+        self.extension = os.path.splitext(input)[1][1:]
 
 ####################### FUNCTIONS ##################################
 def height(s):
@@ -169,7 +179,35 @@ def crop(image, image_param, list_linecords, border, hobj_bottom):
                 imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
     return 0
 
-def splice():
+def splice(input, extension):
+    os.chdir(input)
+    output = input+"\\spliced\\"
+    # create outputdir
+    list_splice = []
+    if not os.path.isdir(output):
+        os.mkdir(output)
+    for image in glob.glob("*.%s" % (extension)):
+        Sep = ["a", "b", "c"]
+        if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in Sep:
+            splice_param = Splice_Param(input, os.path.splitext(image)[0].split("_"))
+            if splice_param.segmenttype != 'c':
+                list_splice.append(image)
+            else:
+                print "Splice"
+                list_splice.append(image)
+                segments = [misc.imread(img,mode='RGB') for img in list_splice]
+                img_height = sum(segment.shape[0] for segment in segments)
+                img_width = max(segment.shape[1] for segment in segments)
+                #np.zeros((255, 255, 3), dtype=np.uint8)
+                spliced_image = np.zeros((img_height, img_width, 3), dtype=np.uint8)
+                y = 0
+                for segment in segments:
+                    h, w, d = segment.shape
+                    spliced_image[y:y + h, 0:w] = segment
+                    y += h
+                print spliced_image.shape
+                imsave("%s.jpg" % (output+"spliced"),spliced_image)
+                list_splice = []
     return 0
 
 def plot():
@@ -177,7 +215,7 @@ def plot():
 ####################### MAIN ##################################
 def crass():
     ####################### INIT ##################################
-    input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\Unpaper-Ergebnisse\\hoppa-405844417-0050_0158.jpg"
+    input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\Unpaper-Ergebnisse\\hoppa-405844417-0070_0910.jpg"
     if not os.path.isfile(input):
         fname = os.path.basename(input)
         print fname
@@ -210,11 +248,13 @@ def crass():
     if True == True:
         print "start crop"
         crop(image, image_param, list_linecords, border, hobj_bottom)
+        input = image_param.pathout
+        extension = image_param.extension
 
     ####################### SPLICE ##################################
-    if True == False:
+    if True == True:
         print "start splice"
-        splice()
+        splice(input,extension)
 
     ####################### PLOT ##################################
     if True == False:
