@@ -28,10 +28,10 @@ class Line_Param():
 class Image_Param():
     def __init__(self, image, input):
         self.height, self.width = image.shape
-        self.path =
-        self.pathout =
-        self.name =
-        self.extension =
+        self.path = os.path.dirname(input)
+        self.pathout = os.path.dirname(input)+"\\out\\"
+        self.name = os.path.splitext(os.path.basename(input))[0]
+        self.extension = os.path.splitext(os.path.basename(input))[1][1:]
 
 ####################### FUNCTIONS ##################################
 def height(s):
@@ -51,7 +51,7 @@ def mindist(s,length):
     else:
         return d2-10
 
-def deskew(image, image_param, line_param, deskew_rng,pathout, fname):
+def deskew(image, image_param, line_param, deskew_rng):
     # Deskew
     # Calculate the angle of the points between 20% and 80% of the line
     thresh = th.threshold_sauvola(image, 31)
@@ -78,13 +78,13 @@ def deskew(image, image_param, line_param, deskew_rng,pathout, fname):
             polyfit_value = np.polyfit(arr, mean_y, 1)
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
             deskew_image = sktransform.rotate(image, deskewangle)
-            deskew_path = "%s_deskew.%s" % (pathout+os.path.splitext(fname)[0], os.path.splitext(fname)[1])
+            deskew_path = "%s_deskew.%s" % (image_param.pathout+image_param.name, image_param.extension)
             imsave(deskew_path, deskew_image)
             break
 
     return deskew_path
 
-def linecord_analyse(image, image_param, line_param, pathout, fname):
+def linecord_analyse(image, image_param, line_param):
     thresh = th.threshold_sauvola(image, 31)
     binary = image > thresh
     binary = 1-binary #inverse binary
@@ -101,16 +101,15 @@ def linecord_analyse(image, image_param, line_param, pathout, fname):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
         if line_param.minwidth * image_param.width <  width(b) < line_param.maxwidth * image_param.width \
-                and b[0].stop < image_param.height * 0.3 and count_height == 0 and b[0].start != 0:
+                and b[0].stop < image_param.height * 0.3 and count_width == 0 and b[0].start != 0:
 
             # Distance Calculation
             border = mindist(b, image_param.width)
             hobj_bottom = b[0].stop + 5  # Lowest Point of object + 5 Pixel
-            rut = image[hobj_bottom:image_param.height, border:image_param.width - border]  # Region Under Topline
-            imsave("%s_crop.%s" % (pathout+os.path.splitext(fname)[0], os.path.splitext(fname)[1]), rut)
+            roi = image[hobj_bottom:image_param.height, border:image_param.width - border]  # region of interest
+            imsave("%s_crop.%s" % (image_param.pathout+image_param.name, image_param.extension), roi)
 
             # Get coordinats of the line
-            lvl_linecords = linecords(b)
             labels[b][labels[b] == i + 1] = 0
             count_width += 1
 
@@ -140,38 +139,37 @@ def linecord_analyse(image, image_param, line_param, pathout, fname):
     #return 0
 
 
-def crop(image, image_param, list_linecords, border, hobj_bottom, pathout, fname):
-    pathoutfile = pathout+os.path.splitext(fname)[0]
-    fextension = os.path.splitext(fname)[1]
+def crop(image, image_param, list_linecords, border, hobj_bottom):
+    fpath = image_param.pathout+image_param.name
     for idx, cords in enumerate(list_linecords):
         #Header
         if idx == 0:
             roi = image[0:cords[0][0] -2 , 0:image.shape[1]]  # region of interest
-            imsave("%s_%d_h.%s" % (pathoutfile, idx,fextension), roi)
+            imsave("%s_%d_h.%s" % (fpath, idx,image_param.extension), roi)
         if idx == len(list_linecords)-1:
             roi = image[cords[0][1] + 2:image.shape[0], 0:image.shape[1]]  # region of interest
-            imsave("%s_%d_f.%s" % (pathoutfile, idx,fextension), roi)
+            imsave("%s_%d_f.%s" % (fpath, idx,image_param.extension), roi)
         if cords[2][0] == 'B':
             print "Blank"
             # Add sum extra space to the cords
             roi = image[cords[0][0] + 2:cords[0][1] - 2, cords[1][0]:cords[1][1]]  # region of interest
-            imsave("%s_%d_c.%s" % (pathoutfile, idx,fextension),roi)
+            imsave("%s_%d_c.%s" % (fpath, idx,image_param.extension),roi)
         if cords[2][0] == 'P':
             if idx == 0:
                 print "Plumb-First"
                 roi = image[hobj_bottom + 2:cords[0][1] + 15, border:cords[1][0] - 2]  # region of interest
-                imsave("%s_%d_a.%s" % (pathoutfile, idx,fextension), roi)
+                imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
                 roi = image[hobj_bottom + 2:cords[0][1] + 15, cords[1][1] + 2:image_param.width - border]
-                imsave("%s_%d_b.%s" % (pathoutfile, idx,fextension), roi)
+                imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
             else:
                 print "Plumb"
                 roi = image[cords[0][0] - 15:cords[0][1] + 15, border:cords[1][0] - 2]  # region of interest
-                imsave("%s_%d_a.%s" % (pathoutfile, idx,fextension), roi)
+                imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
                 roi = image[cords[0][0] - 15:cords[0][1] + 15, cords[1][1] + 2:image_param.width - border]
-                imsave("%s_%d_b.%s" % (pathoutfile, idx,fextension), roi)
+                imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
     return 0
 
-def merge():
+def splice():
     return 0
 
 def plot():
@@ -180,19 +178,19 @@ def plot():
 def crass():
     ####################### INIT ##################################
     input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\Unpaper-Ergebnisse\\hoppa-405844417-0050_0158.jpg"
-    if os.path.isfile(input):
+    if not os.path.isfile(input):
         fname = os.path.basename(input)
         print fname
         path = os.path.dirname(input)
         print path
-    pathout = path+"\\out\\"
-    # create outputdir
-    if not os.path.isdir(pathout):
-        os.mkdir(pathout)
     # read image
-    image = imread("%s.%s" % (path+fname, os.path.splitext(fname)[1]), as_grey=True)
+    image = imread("%s" % (input), as_grey=True)
     image_param = Image_Param(image,input)
     line_param = Line_Param()
+
+    # create outputdir
+    if not os.path.isdir(image_param.pathout):
+        os.mkdir(image_param.pathout)
 
     ####################### DESKEW ##################################
     # Deskew the loaded image
@@ -200,33 +198,28 @@ def crass():
         print "start deskew"
         #Only values between 0-49 valid
         deskew_rng = 20
-        deskew_path = deskew(image, image_param, line_param, deskew_rng,pathout,fname)
+        deskew_path = deskew(image, image_param, line_param, deskew_rng)
         image = imread("%s" % (deskew_path), as_grey=True)
-        image_param = Image_Param(image)
+        image_param = Image_Param(image, input)
         line_param = Line_Param()
 
     ####################### ANALYSE - LINECORDS ##################################
-    if True == True:
-        print "start linecord-analyse"
-        list_linecords, border, hobj_bottom = linecord_analyse(image, image_param, line_param, pathout, fname)
-    else:
-        list_linecords=0
-        border=0
-        hobj_bottom=0
+    print "start linecord-analyse"
+    list_linecords, border, hobj_bottom = linecord_analyse(image, image_param, line_param)
     ####################### CROP ##################################
     if True == True:
         print "start crop"
-        crop(image, image_param, list_linecords, border, hobj_bottom, pathout, fname)
+        crop(image, image_param, list_linecords, border, hobj_bottom)
 
     ####################### SPLICE ##################################
     if True == False:
         print "start splice"
-        merge()
+        splice()
 
     ####################### PLOT ##################################
     if True == False:
         print "start plot"
-        Output = np.array(labels != 0, 'B')
+        Output = 0 #np.array(labels != 0, 'B')
 
         fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
         ax = axes.ravel()
