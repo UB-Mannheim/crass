@@ -24,6 +24,7 @@ class Line_Param():
     maxwidth = 0.95
     minheight = 0.05
     maxheight = 0.95
+    ramp = None
 
 class Image_Param():
     def __init__(self, image, input):
@@ -59,34 +60,37 @@ def mindist(s,length):
         return d2-int(d2*0.9)
 
 def find_text_border_dist(binary, cords, border, image_param):
-    print cords
-    print binary
     binary_left = binary[cords[0][0]:cords[0][1],0:cords[1][0]]
     labels, numl = measurements.label(binary_left)
     objects = measurements.find_objects(labels)
     min_dist = 0
     txtborder = []
     for i, b in enumerate(objects):
-        if 10 < b[1].start:
+        if 30 < b[1].start:
             if min_dist == 0:
                 min_dist = b[1].start
             if b[1].start < min_dist:
                 min_dist = b[1].start
     txtborder.append(min_dist-10)
-    print txtborder[0]
     binary_right = binary[cords[0][0]:cords[0][1], cords[1][1]:image_param.width]
     labels, numl = measurements.label(binary_right)
     objects = measurements.find_objects(labels)
     min_dist = 0
     for i, b in enumerate(objects):
-        print b[1].start
         if 10 < b[1].start:
             if min_dist == 0:
                 min_dist = b[1].start
             if b[1].start < min_dist:
                 min_dist = b[1].start
     txtborder.append(min_dist - 10)
-    print txtborder[1]
+    print txtborder
+    return txtborder
+
+def whiteout_ramp(roi, cords, line_param):
+    if line_param.ramp == True:
+
+    else:
+
     return 0
 
 def deskew(image, image_param, line_param, deskew_rng):
@@ -101,11 +105,10 @@ def deskew(image, image_param, line_param, deskew_rng):
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
-        if width(b) > line_param.minwidth * image_param.width and width(b) < line_param.maxwidth * image_param.width and \
+        if line_param.minwidth * image_param.width <  width(b) < line_param.maxwidth * image_param.width and \
                         int(image_param.height * 0.04) < b[0].stop < int(image_param.height * 0.3) and b[0].start != 0:
 
             obj_height, ob_jwidth = binary[b].shape
-
             obj_width_prc = ob_jwidth / 100
             arr = np.arange(1, (obj_width_prc * (100 - deskew_rng * 2)) + 1)
             mean_y = []
@@ -115,12 +118,16 @@ def deskew(image, image_param, line_param, deskew_rng):
                 mean_y.append((value_y[0].stop + value_y[0].start) / 2)
             polyfit_value = np.polyfit(arr, mean_y, 1)
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
+            if deskewangel > 0:
+                line_param.ramp = True
+            else:
+                line_param.ramp = False
             deskew_image = sktransform.rotate(image, deskewangle)
             deskew_path = "%s_deskew.%s" % (image_param.pathout+image_param.name, image_param.extension)
             imsave(deskew_path, deskew_image)
             break
 
-    return deskew_path
+    return deskew_path,
 
 def linecord_analyse(image, image_param, line_param):
     thresh = th.threshold_sauvola(image, 31)
@@ -158,30 +165,23 @@ def linecord_analyse(image, image_param, line_param):
                 if b[0].start - hobj_bottom > 50:
                     list_linecords.append(np.array([[hobj_bottom, b[0].start], [border, image_param.width - border], ['B']]))
                     count_height += 1
-                txtborder = find_text_border_dist(binary, cords, border,image_param)
-                list_linecords.append([cords[0], cords[1], ['P'], [txtborder]])
+                list_linecords.append([cords[0], cords[1], ['P'],])
             elif count_height != 0:
                 if b[0].start - list_linecords[count_height - 1][0][1] > 50:
                     list_linecords.append(np.array(
                         [[list_linecords[count_height - 1][0][1], b[0].start], [border, image_param.width - border], ['B']]))
                     count_height += 1
-                    txtborder = find_text_border_dist(binary, cords, border,image_param)
-                    list_linecords.append([cords[0], cords[1], ['P'],[txtborder]])
-                elif b[0].start - list_linecords[count_height - 1][0][1] < 20:
+                    list_linecords.append([cords[0], cords[1], ['P']])
+                elif b[0].start - list_linecords[count_height - 1][0][1] < 35:
                     list_linecords[count_height - 1][0][1] = b[0].stop
                     count_height -= 1
                 else:
-                    txtborder = find_text_border_dist(binary, cords, border,image_param)
-                    list_linecords.append([cords[0], cords[1], ['P'],[txtborder]])
+                    list_linecords.append([cords[0], cords[1], ['P']])
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
     return list_linecords, border, hobj_bottom
 
-#def save_roi(widthstart. widthstop, heightstart, heightstop):
-    #return 0
-
-
-def crop(image, image_param, list_linecords, border, hobj_bottom):
+def crop(image, image_param, line_param, list_linecords, border, hobj_bottom):
     fpath = image_param.pathout+image_param.name
     for idx, cords in enumerate(list_linecords):
         #Header
@@ -201,21 +201,30 @@ def crop(image, image_param, list_linecords, border, hobj_bottom):
         if cords[2][0] == 'P':
             if idx == 0:
                 print "plumb-first"
-                roi = image[hobj_bottom + 2:cords[0][1] + 15, border:cords[1][0] - 2]  # region of interest
+                roi = image[hobj_bottom + 2:cords[0][1] + 35, border:cords[1][0] - 2]  # region of interest
+                if line_param.ramp != None:
+                    whiteout_ramp(roi,cords,line_param)
                 imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
-                roi = image[hobj_bottom + 2:cords[0][1] + 15, cords[1][1] + 2:image_param.width - border]
+                roi = image[hobj_bottom + 2:cords[0][1] + 35, cords[1][1]+1:image_param.width - border]
+                if line_param.ramp != None:
+                    whiteout_ramp(roi,cords,line_param)
                 imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
             else:
                 print "plumb"
-                roi = image[cords[0][0] - 15:cords[0][1] + 15, border:cords[1][0] - 2]  # region of interest
+                print cords
+                roi = image[cords[0][0] - 15:cords[0][1] + 35, border:cords[1][0] - 2]  # region of interest
+                if line_param.ramp != None:
+                    whiteout_ramp(roi,cords,line_param)
                 imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
-                roi = image[cords[0][0] - 15:cords[0][1] + 15, cords[1][1] + 2:image_param.width - border]
+                roi = image[cords[0][0] - 15:cords[0][1] + 35, cords[1][1]+1:image_param.width - border]
+                if line_param.ramp != None:
+                    whiteout_ramp(roi,cords,line_param)
                 imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
     return 0
 
 def splice(input, extension):
     os.chdir(input)
-    output = input+"\\spliced1\\"
+    output = input+"\\spliced\\"
     # create outputdir
     list_splice = []
     if not os.path.isdir(output):
@@ -247,7 +256,7 @@ def plot():
 ####################### MAIN ##################################
 def crass():
     ####################### INIT ##################################
-    input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\Test1957\\jpg\\hoppa-405844417-0050_0007.jpg"
+    input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\"
     if not os.path.isfile(input):
         os.chdir(input)
         extension = "jpg"
@@ -277,7 +286,6 @@ def crass():
             deskew_path = deskew(image, image_param, line_param, deskew_rng)
             image = imread("%s" % (deskew_path), as_grey=True)
             image_param = Image_Param(image, input)
-            line_param = Line_Param()
 
         ####################### ANALYSE - LINECORDS ##################################
         print "start linecord-analyse"
@@ -285,7 +293,7 @@ def crass():
         ####################### CROP ##################################
         if True == True:
             print "start crop"
-            crop(image, image_param, list_linecords, border, hobj_bottom)
+            crop(image, image_param, line_param, list_linecords, border, hobj_bottom)
             input = image_param.pathout
             extension = image_param.extension
 
