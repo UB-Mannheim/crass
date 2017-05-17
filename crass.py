@@ -8,6 +8,7 @@
 
 ####################### IMPORT ##################################
 import os
+import copy
 import glob
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,7 +19,7 @@ import skimage.transform as sktransform
 from scipy.ndimage import morphology,measurements,filters
 import scipy.misc as misc
 
-####################### OBJECTS ###################################
+####################### CLASSES & METHODS ###################################
 class Clippingmask():
     def __init__(self, image):
         self.height_start, self.width_start = 0, 0
@@ -34,14 +35,16 @@ class Image_Param():
         self.name = os.path.splitext(os.path.basename(input))[0]
         self.extension = os.path.splitext(os.path.basename(input))[1][1:]
 
-class Line_Cords():
-    def __init__(self, object):
+class Linecoords():
+    def __init__(self, binary, value ,object):
         self.height_start = object[0].start
         self.height_stop = object[0].stop
         self.width_start = object[1].start
         self.width_stop = object[1].stop
         self.object = object
-        self.segementtype = None
+        self.object_value = value
+        self.object_matrix = copy.deepcopy(binary[object])
+        self.segmenttype = None
 
 class Line_Param():
     minwidth = 0.3
@@ -64,7 +67,7 @@ def get_height(s):
 def get_width(s):
     return s[1].stop-s[1].start
 
-def get_linecords(s):
+def get_linecoords(s):
     return [[s[0].start,s[0].stop],[s[1].start,s[1].stop]]
 
 def get_mindist(s,length):
@@ -102,20 +105,20 @@ def find_text_border_dist(binary, cords, border, image_param):
     print txtborder
     return txtborder
 
-def whiteout_ramp(image, cords, line_param,image_param, border, side):
-    roi = 0
-    if line_param.ramp == "HEY":
-        print "TRUE"
-        if side == "a":
-            roi = image[cords[0][0] - 15:cords[0][1] + 35, border:cords[1][1]]
-            line_grad = (cords[1][0]-cords[1][1])/(cords[1][0]-cords[1][1])
-
-        if side == "b":
-            roi = image[cords[0][0] - 15:cords[0][1] + 35, cords[1][0]:image_param.width - border]
-    else:
-        print "Whiteout"
-        print cords[3][0].start
-    return roi
+def whiteout_ramp(image, linecoords,line_param):
+    if line_param.ramp != None:
+            #for idx in range(linecoords.width_stop):
+        imagesection = image[linecoords.object]
+        count = 0
+        for i in linecoords.object_matrix:
+            whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
+            imagesection[count,whitevalue.start-2:whitevalue.stop+2] = 255
+            count +=1
+            #if i == linecoords.object_value+1:
+                #print "delete it"
+            #roi = image[cords[0][0] - 15:cords[0][1] + 35, border:cords[1][1]]
+            #line_grad = (cords[1][0]-cords[1][1])/(cords[1][0]-cords[1][1])
+    return 0
 
 def deskew(image, image_param, line_param, deskew_linesize):
     # Deskew
@@ -127,10 +130,11 @@ def deskew(image, image_param, line_param, deskew_linesize):
     objects = measurements.find_objects(labels)
     deskew_path = "0"
     for i, b in enumerate(objects):
+        linecoords = Linecoords(image, i, b)
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
         if line_param.minwidth * image_param.width < get_width(b) < line_param.maxwidth * image_param.width and \
-                        int(image_param.height * 0.04) < b[0].stop < int(image_param.height * 0.3) and b[0].start != 0:
+                        int(image_param.height * 0.04) < linecoords.height_stop < int(image_param.height * 0.3) and linecoords.height_start != 0:
 
             obj_height, ob_jwidth = binary[b].shape
             obj_width_prc = ob_jwidth / 100
@@ -153,7 +157,7 @@ def deskew(image, image_param, line_param, deskew_linesize):
 
     return deskew_path
 
-def linecord_analyse(image, image_param, line_param, clippingmask):
+def linecoords_analyse(image, image_param, line_param, clippingmask):
     thresh = th.threshold_sauvola(image, 31)
     binary = image > thresh
     binary = 1-binary #inverse binary
@@ -161,25 +165,21 @@ def linecord_analyse(image, image_param, line_param, clippingmask):
     objects = measurements.find_objects(labels)
     count_height = 0
     count_width = 0
-    list_linecords = [] # Init list of linecoordinates the format is: [0]: width.start, width.stopt,
+    list_linecoords = [] # Init list of linecoordinates the format is: [0]: width.start, width.stopt,
     # [1]:height.start, height.stop, [2]: Type of line [B = blank, P = plumb]
 
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
-        line = Line_Cords(b)
-        print "line coords"
-        print line.width_stop
-        obj_cords_height = b[0]
-        obj_cords_width = b[1]
+        linecoords = Linecoords(labels, i, b)
         if line_param.minwidth * image_param.width <  get_width(b) < line_param.maxwidth * image_param.width \
-                and int(image_param.height * 0.04) <  obj_cords_height.stop < int(image_param.height * 0.3) and count_width == 0 and obj_cords_height.start != 0:
+                and int(image_param.height * 0.04) <  linecoords.height_stop < int(image_param.height * 0.3) and count_width == 0 and linecoords.height_start != 0:
             # Distance Calculation - defining the cropmask
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 5  # Lowest Point of object + 5 Pixel
             if clippingmask.user == None:
-                clippingmask.width_start = obj_cords_width.start - border
-                clippingmask.width_stop = obj_cords_width.stop + border
+                clippingmask.width_start = linecoords.width_start - border
+                clippingmask.width_stop = linecoords.width_stop + border
                 clippingmask.height_start = topline_width_stop
                 clippingmask.height_stop = 0
             # Test for cropping the area under the topline
@@ -191,56 +191,66 @@ def linecord_analyse(image, image_param, line_param, clippingmask):
             count_width += 1
 
         if  line_param.minheight * image_param.height < get_height(b) < line_param.maxheight * image_param.height \
-                and get_width(b) < 50 and int(image_param.width*0.35) < (obj_cords_width.start+obj_cords_width.stop)/2 < int(image_param.width*0.75):
-            cords = get_linecords(b)
+                and get_width(b) < 50 and int(image_param.width*0.35) < (linecoords.width_start+linecoords.width_stop)/2 < int(image_param.width*0.75):
+            linecoords.segmenttype = 'P' # Defaultvalue for segmenttype 'P' for plumb lines
             if count_height == 0:
                 if b[0].start - topline_width_stop > 50:
-                    list_linecords.append(np.array([[topline_width_stop, b[0].start], [border, image_param.width - border], ['B'],b]))
+                    blankline = Linecoords(labels,i,b)
+                    blankline.segmenttype = 'B'
+                    blankline.height_start = topline_width_stop
+                    blankline.width_start = border
+                    blankline.width_stop = image_param.width - border
+                    list_linecoords.append(blankline)
                     count_height += 1
-                list_linecords.append([cords[0], cords[1], ['P'],b])
+                list_linecoords.append(linecoords)
             elif count_height != 0:
-                if b[0].start - list_linecords[count_height - 1][0][1] > 50:
-                    list_linecords.append(np.array(
-                        [[list_linecords[count_height - 1][0][1], b[0].start], [border, image_param.width - border], ['B'],b]))
+                if b[0].start - list_linecoords[count_height - 1].height_stop > 50:
+                    blankline = Linecoords(labels,i,b)
+                    blankline.segmenttype = 'B'
+                    blankline.height_start = list_linecoords[count_height - 1].height_stop
+                    blankline.height_stop = linecoords.height_start
+                    blankline.width_start = border
+                    blankline.width_stop = image_param.width - border
+                    list_linecoords.append(blankline)
                     count_height += 1
-                    list_linecords.append([cords[0], cords[1], ['P'],b])
-                elif b[0].start - list_linecords[count_height - 1][0][1] < 35:
-                    list_linecords[count_height - 1][0][1] = b[0].stop
+                    list_linecoords.append(linecoords)
+                elif b[0].start - list_linecoords[count_height - 1].height_stop < 35:
+                    list_linecoords[count_height - 1].height_stop = b[0].stop
                     count_height -= 1
                 else:
-                    list_linecords.append([cords[0], cords[1], ['P'],b])
+                    list_linecoords.append(linecoords)
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
-    return list_linecords, border, topline_width_stop
+    return list_linecoords, border, topline_width_stop
 
-def crop(image, image_param, line_param, list_linecords, clippingmask):
+def crop(image, image_param, line_param, list_linecoords, clippingmask):
     fpath = image_param.pathout+image_param.name
-    for idx, cords in enumerate(list_linecords):
+    for idx, linecoords in enumerate(list_linecoords):
         #Header
         if idx == 0:
             print "header"
-            roi = image[0:cords[0][0] -2 , 0:image.shape[1]]  # region of interest
+            roi = image[0:linecoords.height_start -2 , 0:image_param.width]  # region of interest
             imsave("%s_%d_h.%s" % (fpath, idx,image_param.extension), roi)
-        if idx == len(list_linecords)-1:
-            print "footer"
-            roi = image[cords[0][1] + 2:image.shape[0], 0:image.shape[1]]  # region of interest
-            imsave("%s_%d_f.%s" % (fpath, idx,image_param.extension), roi)
-        if cords[2][0] == 'B':
+        if linecoords.segmenttype == 'B':
             print "blank"
             # Add sum extra space to the cords
-            roi = image[cords[0][0] + 2:cords[0][1] - 2, cords[1][0]:cords[1][1]]  # region of interest
+            roi = image[linecoords.height_start + 2:linecoords.height_stop - 2, linecoords.width_start:linecoords.width_stop]  # region of interest
             imsave("%s_%d_c.%s" % (fpath, idx,image_param.extension),roi)
-        if cords[2][0] == 'P':
+        if linecoords.segmenttype == 'P':
             if idx == 0:
                 print "plumb-first"
-                cords[0][0] = clippingmask.height_start+17
+                linecoords.height_start = clippingmask.height_start+17
             print "plumb"
             if line_param.ramp != None:
-                testimage = whiteout_ramp(image,cords,line_param,image_param, clippingmask.width_start, "a")
-            roi = image[cords[0][0] - 15:cords[0][1] + 35, clippingmask.width_start:cords[1][0] - 2]  # region of interest
+                testimage = whiteout_ramp(image,linecoords,line_param)
+            roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
             imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
-            roi = image[cords[0][0] - 15:cords[0][1] + 35, cords[1][1]+1:clippingmask.width_stop]
+            roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, linecoords.width_start+1:clippingmask.width_stop]
             imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
+        if idx == len(list_linecoords)-1:
+            print "footer"
+            roi = image[linecoords.height_stop + 2:image_param.height, 0:image_param.width]  # region of interest
+            imsave("%s_%d_f.%s" % (fpath, idx,image_param.extension), roi)
     return 0
 
 def splice(input, extension):
@@ -262,7 +272,7 @@ def splice(input, extension):
                 segments = [misc.imread(img,mode='RGB') for img in list_splice]
                 img_height = sum(segment.shape[0] for segment in segments)
                 img_width = max(segment.shape[1] for segment in segments)
-                spliced_image = np.zeros((img_height, img_width, 3), dtype=np.uint8)
+                spliced_image = np.ones((img_height, img_width, 3), dtype=np.uint8)
                 y = 0
                 for segment in segments:
                     h, w, d = segment.shape
@@ -309,15 +319,14 @@ def crass():
             image = imread("%s" % (image_param.deskewpath), as_grey=True)
             image_param = Image_Param(image, input)
 
-        ####################### ANALYSE - LINECORDS ##################################
-        print "start linecord-analyse"
+        ####################### ANALYSE - LINECOORDS ##################################
+        print "start linecoord-analyse"
         clippingmask = Clippingmask(image)
-        list_linecords, border, topline_width_stop = linecord_analyse(image, image_param, line_param, clippingmask)
-        print clippingmask.width_start
+        list_linecoords, border, topline_width_stop = linecoords_analyse(image, image_param, line_param, clippingmask)
         ####################### CROP ##################################
         if True == True:
             print "start crop"
-            crop(image, image_param, line_param, list_linecords, clippingmask)
+            crop(image, image_param, line_param, list_linecoords, clippingmask)
             input = image_param.pathout
             extension = image_param.extension
 
