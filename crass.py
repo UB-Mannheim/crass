@@ -15,8 +15,9 @@ import matplotlib.pyplot as plt
 from skimage.io import imread
 from skimage.io import imsave
 import skimage.filters.thresholding as th
-import skimage.transform as sktransform
-from scipy.ndimage import morphology,measurements,filters
+import skimage.transform as transform
+import skimage.morphology as morph
+from scipy.ndimage import measurements
 import scipy.misc as misc
 
 ####################### CLASSES & METHODS ###################################
@@ -78,46 +79,17 @@ def get_mindist(s,length):
     else:
         return d2-int(d2*0.2)
 
-def find_text_border_dist(binary, cords, border, image_param):
-    binary_left = binary[cords[0][0]:cords[0][1],0:cords[1][0]]
-    labels, numl = measurements.label(binary_left)
-    objects = measurements.find_objects(labels)
-    min_dist = 0
-    txtborder = []
-    for i, b in enumerate(objects):
-        if 30 < b[1].start:
-            if min_dist == 0:
-                min_dist = b[1].start
-            if b[1].start < min_dist:
-                min_dist = b[1].start
-    txtborder.append(min_dist-10)
-    binary_right = binary[cords[0][0]:cords[0][1], cords[1][1]:image_param.width]
-    labels, numl = measurements.label(binary_right)
-    objects = measurements.find_objects(labels)
-    min_dist = 0
-    for i, b in enumerate(objects):
-        if 10 < b[1].start:
-            if min_dist == 0:
-                min_dist = b[1].start
-            if b[1].start < min_dist:
-                min_dist = b[1].start
-    txtborder.append(min_dist - 10)
-    print txtborder
-    return txtborder
-
-def whiteout_ramp(image, linecoords,line_param):
-    if line_param.ramp != None:
-            #for idx in range(linecoords.width_stop):
-        imagesection = image[linecoords.object]
-        count = 0
-        for i in linecoords.object_matrix:
-            whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
-            imagesection[count,whitevalue.start-2:whitevalue.stop+2] = 255
-            count +=1
-            #if i == linecoords.object_value+1:
-                #print "delete it"
-            #roi = image[cords[0][0] - 15:cords[0][1] + 35, border:cords[1][1]]
-            #line_grad = (cords[1][0]-cords[1][1])/(cords[1][0]-cords[1][1])
+def whiteout_ramp(image, linecoords):
+    #for idx in range(linecoords.width_stop):
+    imagesection = image[linecoords.object]
+    count = 0
+    #print imagesection.shape
+    # Dilation enlarge the bright segements and cut them out off the original image
+    for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
+        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
+        imagesection[count,whitevalue.start:whitevalue.stop] = 255
+        count +=1
+    imsave("U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\whitelines\\%s.jpg" %(linecoords.object_value), imagesection)
     return 0
 
 def deskew(image, image_param, line_param, deskew_linesize):
@@ -146,11 +118,8 @@ def deskew(image, image_param, line_param, deskew_linesize):
                 mean_y.append((value_y[0].stop + value_y[0].start) / 2)
             polyfit_value = np.polyfit(arr, mean_y, 1)
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
-            if deskewangle > 0:
-                line_param.ramp = False
-            else:
-                line_param.ramp = True
-            deskew_image = sktransform.rotate(image, deskewangle)
+            line_param.ramp = True
+            deskew_image = transform.rotate(image, deskewangle)
             deskew_path = "%s_deskew.%s" % (image_param.pathout+image_param.name, image_param.extension)
             imsave(deskew_path, deskew_image)
             break
@@ -174,6 +143,7 @@ def linecoords_analyse(image, image_param, line_param, clippingmask):
         linecoords = Linecoords(labels, i, b)
         if line_param.minwidth * image_param.width <  get_width(b) < line_param.maxwidth * image_param.width \
                 and int(image_param.height * 0.04) <  linecoords.height_stop < int(image_param.height * 0.3) and count_width == 0 and linecoords.height_start != 0:
+
             # Distance Calculation - defining the cropmask
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 5  # Lowest Point of object + 5 Pixel
@@ -182,6 +152,7 @@ def linecoords_analyse(image, image_param, line_param, clippingmask):
                 clippingmask.width_stop = linecoords.width_stop + border
                 clippingmask.height_start = topline_width_stop
                 clippingmask.height_stop = 0
+
             # Test for cropping the area under the topline
             #roi = image[hobj_bottom:image_param.height, border:image_param.width - border]  # region of interest
             #imsave("%s_crop.%s" % (image_param.pathout+image_param.name, image_param.extension), roi)
@@ -198,11 +169,15 @@ def linecoords_analyse(image, image_param, line_param, clippingmask):
                     blankline = Linecoords(labels,i,b)
                     blankline.segmenttype = 'B'
                     blankline.height_start = topline_width_stop
+                    blankline.height_stop = linecoords.height_start
                     blankline.width_start = border
                     blankline.width_stop = image_param.width - border
-                    list_linecoords.append(blankline)
+                    list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
-                list_linecoords.append(linecoords)
+                list_linecoords.append(copy.deepcopy(linecoords))
+                if line_param.ramp != None:
+                    whiteout_ramp(image, linecoords)
+
             elif count_height != 0:
                 if b[0].start - list_linecoords[count_height - 1].height_stop > 50:
                     blankline = Linecoords(labels,i,b)
@@ -211,46 +186,57 @@ def linecoords_analyse(image, image_param, line_param, clippingmask):
                     blankline.height_stop = linecoords.height_start
                     blankline.width_start = border
                     blankline.width_stop = image_param.width - border
-                    list_linecoords.append(blankline)
+                    list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
-                    list_linecoords.append(linecoords)
+                    list_linecoords.append(copy.deepcopy(linecoords))
+                    if line_param.ramp != None:
+                        whiteout_ramp(image, linecoords)
                 elif b[0].start - list_linecoords[count_height - 1].height_stop < 35:
+                    if line_param.ramp != None:
+                        whiteout_ramp(image, linecoords)
                     list_linecoords[count_height - 1].height_stop = b[0].stop
                     count_height -= 1
                 else:
-                    list_linecoords.append(linecoords)
+                    list_linecoords.append(copy.deepcopy(linecoords))
+                    if line_param.ramp != None:
+                        whiteout_ramp(image, linecoords)
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
+    imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, image_param.extension), image)
     return list_linecoords, border, topline_width_stop
 
 def crop(image, image_param, line_param, list_linecoords, clippingmask):
-    fpath = image_param.pathout+image_param.name
+    filepath = image_param.pathout+image_param.name
     for idx, linecoords in enumerate(list_linecoords):
+
         #Header
         if idx == 0:
             print "header"
             roi = image[0:linecoords.height_start -2 , 0:image_param.width]  # region of interest
-            imsave("%s_%d_h.%s" % (fpath, idx,image_param.extension), roi)
+            imsave("%s_%d_h.%s" % (filepath, idx,image_param.extension), roi)
+
+        # Crop middle segments
         if linecoords.segmenttype == 'B':
             print "blank"
             # Add sum extra space to the cords
             roi = image[linecoords.height_start + 2:linecoords.height_stop - 2, linecoords.width_start:linecoords.width_stop]  # region of interest
-            imsave("%s_%d_c.%s" % (fpath, idx,image_param.extension),roi)
+            imsave("%s_%d_c.%s" % (filepath, idx,image_param.extension),roi)
         if linecoords.segmenttype == 'P':
             if idx == 0:
                 print "plumb-first"
                 linecoords.height_start = clippingmask.height_start+17
             print "plumb"
-            if line_param.ramp != None:
-                testimage = whiteout_ramp(image,linecoords,line_param)
             roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
-            imsave("%s_%d_a.%s" % (fpath, idx,image_param.extension), roi)
+            imsave("%s_%d_a.%s" % (filepath, idx,image_param.extension), roi)
             roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, linecoords.width_start+1:clippingmask.width_stop]
-            imsave("%s_%d_b.%s" % (fpath, idx,image_param.extension), roi)
+            imsave("%s_%d_b.%s" % (filepath, idx,image_param.extension), roi)
+
+        # Footer
         if idx == len(list_linecoords)-1:
             print "footer"
             roi = image[linecoords.height_stop + 2:image_param.height, 0:image_param.width]  # region of interest
-            imsave("%s_%d_f.%s" % (fpath, idx,image_param.extension), roi)
+            imsave("%s_%d_f.%s" % (filepath, idx,image_param.extension), roi)
+
     return 0
 
 def splice(input, extension):
