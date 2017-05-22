@@ -7,18 +7,28 @@
 #Date:     **12.05.2017**
 
 ####################### IMPORT ##################################
-import os
+import argparse
 import copy
 import glob
-import numpy as np
 import matplotlib.pyplot as plt
-from skimage.io import imread
-from skimage.io import imsave
-import skimage.filters.thresholding as th
-import skimage.transform as transform
-import skimage.morphology as morph
+import numpy as np
+import os
 from scipy.ndimage import measurements
 import scipy.misc as misc
+import skimage.color as color
+import skimage.filters.thresholding as th
+from skimage.io import imread
+from skimage.io import imsave
+import skimage.morphology as morph
+import skimage.transform as transform
+
+####################### PARSER-SETTINGS ###################################
+parser = argparse.ArgumentParser(description = "Crop And Splice Segements (CRASS) of an image based on blacklines ")
+parser.add_argument('--showmasks',type=bool,default=True,help='output an image with colored masks')
+parser.add_argument('--minwidth',type=float,default=0.3,help='minwidth of the plumb lines')
+parser.add_argument('--maxwidth',type=float,default=0.95,help='maxwidth of the plumb lines')
+parser.add_argument('--minheight',type=float,default=0.05,help='minheight of the vertical lines')
+parser.add_argument('--maxheight',type=float,default=0.95,help='maxheightof the vertical lines')
 
 ####################### CLASSES & METHODS ###################################
 class Clippingmask():
@@ -52,6 +62,7 @@ class Line_Param():
     maxwidth = 0.95
     minheight = 0.05
     maxheight = 0.95
+    show_masks = None
     ramp = None
 
 class Splice_Param():
@@ -62,6 +73,16 @@ class Splice_Param():
         self.extension = os.path.splitext(input)[1][1:]
 
 ####################### FUNCTIONS ##################################
+def set_colored_mask(image, borders, color, intensity):
+    image[borders[0][0]:borders[0][0]+5,borders[1][0]:borders[1][1]] = 0
+    image[borders[0][1]-6:borders[0][1]-1, borders[1][0]:borders[1][1]] = 0
+    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][0]+5] = 0
+    image[borders[0][0]:borders[0][1], borders[1][1]-6:borders[1][1]-1] = 0
+    masked_image = np.ma.greater(image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color],55)
+    image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] += intensity
+    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color] = image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] *masked_image
+    return 0
+
 def get_height(s):
     return s[0].stop-s[0].start
 
@@ -90,6 +111,8 @@ def whiteout_ramp(image, linecoords):
         imagesection[count,whitevalue.start:whitevalue.stop] = 255
         count +=1
     imsave("U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\whitelines\\%s.jpg" %(linecoords.object_value), imagesection)
+    #imsave("C:\\Coding\\jpg\\whitelines\\%s.jpg" % (linecoords.object_value),imagesection)
+    #imsave("U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\whitelines\\%s.jpg" % (linecoords.object_value), imagesection)
     return 0
 
 def deskew(image, image_param, line_param, deskew_linesize):
@@ -202,11 +225,15 @@ def linecoords_analyse(image, image_param, line_param, clippingmask):
                         whiteout_ramp(image, linecoords)
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
-    imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, image_param.extension), image)
+    misc.imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, image_param.extension), image)
+    #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, image_param.extension), image)
     return list_linecoords, border, topline_width_stop
 
 def crop(image, image_param, line_param, list_linecoords, clippingmask):
     filepath = image_param.pathout+image_param.name
+    if line_param.show_masks == True:
+        debugimage = color.gray2rgb(copy.deepcopy(image))
+        print debugimage.shape
     for idx, linecoords in enumerate(list_linecoords):
 
         #Header
@@ -214,6 +241,9 @@ def crop(image, image_param, line_param, list_linecoords, clippingmask):
             print "header"
             roi = image[0:linecoords.height_start -2 , 0:image_param.width]  # region of interest
             imsave("%s_%d_h.%s" % (filepath, idx,image_param.extension), roi)
+            if line_param.show_masks == True:
+                set_colored_mask(debugimage, [[0, linecoords.height_start -2],
+                                              [0, image_param.width]], 0, 100)
 
         # Crop middle segments
         if linecoords.segmenttype == 'B':
@@ -221,6 +251,8 @@ def crop(image, image_param, line_param, list_linecoords, clippingmask):
             # Add sum extra space to the cords
             roi = image[linecoords.height_start + 2:linecoords.height_stop - 2, linecoords.width_start:linecoords.width_stop]  # region of interest
             imsave("%s_%d_c.%s" % (filepath, idx,image_param.extension),roi)
+            if line_param.show_masks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start + 2,linecoords.height_stop - 2], [linecoords.width_start,linecoords.width_stop]], 1, 220)
         if linecoords.segmenttype == 'P':
             if idx == 0:
                 print "plumb-first"
@@ -228,15 +260,22 @@ def crop(image, image_param, line_param, list_linecoords, clippingmask):
             print "plumb"
             roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
             imsave("%s_%d_a.%s" % (filepath, idx,image_param.extension), roi)
+            if line_param.show_masks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start - 15,linecoords.height_stop + 35], [clippingmask.width_start,linecoords.width_stop - 2]], 2, 180)
             roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, linecoords.width_start+1:clippingmask.width_stop]
             imsave("%s_%d_b.%s" % (filepath, idx,image_param.extension), roi)
+            if line_param.show_masks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start - 15,linecoords.height_stop + 35], [linecoords.width_start+1,clippingmask.width_stop]], 0, 180)
 
         # Footer
         if idx == len(list_linecoords)-1:
             print "footer"
             roi = image[linecoords.height_stop + 2:image_param.height, 0:image_param.width]  # region of interest
             imsave("%s_%d_f.%s" % (filepath, idx,image_param.extension), roi)
-
+            if line_param.show_masks == True:
+                set_colored_mask(debugimage, [[linecoords.height_stop + 2,image_param.height], [0,image_param.width]], 1, 100)
+    if line_param.show_masks == True:
+        imsave("%s_masks.%s" % (filepath, image_param.extension), debugimage)
     return 0
 
 def splice(input, extension):
@@ -268,12 +307,33 @@ def splice(input, extension):
                 list_splice = []
     return 0
 
-def plot():
+def plot(image, binary, Output):
+    print "start plot"
+
+    fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
+    ax = axes.ravel()
+
+    ax[0].imshow(image, cmap=plt.cm.gray)
+    ax[0].set_title('Original image')
+
+    ax[1].imshow(binary, cmap=plt.cm.gray)
+    ax[1].set_title('Sauvola')
+
+    ax[2].imshow(Output, cmap=plt.cm.gray)
+    ax[2].set_title('Finding Blackfoot')
+
+    for a in ax:
+        a.axis('off')
+
+    plt.show()
     return 0
 ####################### MAIN ##################################
 def crass():
     ####################### INIT ##################################
     input = "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\"
+    #input = "C:\\Coding\\jpg"
+    line_param = Line_Param()
+    line_param.show_masks = True
     if not os.path.isfile(input):
         os.chdir(input)
         extension = "jpg"
@@ -283,12 +343,12 @@ def crass():
     else:
         inputs =  []
         inputs.append(input)
+        extension = "jpg"
     for input in inputs:
         print input
         # read image
         image = imread("%s" % (input), as_grey=True)
         image_param = Image_Param(image,input)
-        line_param = Line_Param()
 
         # create outputdir
         if not os.path.isdir(image_param.pathout):
@@ -302,6 +362,7 @@ def crass():
             #deskew_linesize
             deskew_linesize = 20
             image_param.deskewpath = deskew(image, image_param, line_param, deskew_linesize)
+            #image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
             image = imread("%s" % (image_param.deskewpath), as_grey=True)
             image_param = Image_Param(image, input)
 
@@ -323,25 +384,7 @@ def crass():
 
     ####################### TEST-PLOT ##################################
     if True == False:
-        print "start plot"
-        Output = 0 #np.array(labels != 0, 'B')
-
-        fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
-        ax = axes.ravel()
-
-        ax[0].imshow(image, cmap=plt.cm.gray)
-        ax[0].set_title('Original image')
-
-        ax[1].imshow(binary, cmap=plt.cm.gray)
-        ax[1].set_title('Sauvola')
-
-        ax[2].imshow(Output, cmap=plt.cm.gray)
-        ax[2].set_title('Finding Blackfoot')
-
-        for a in ax:
-            a.axis('off')
-
-        plt.show()
+        plot(image, binary, Output)
 
 ####################### START ##################################
 if __name__=="__main__":
