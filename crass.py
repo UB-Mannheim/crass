@@ -28,8 +28,11 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
 
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
+    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
+    #                    help='Input file or folder')
+    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0235.jpg",
                         help='Input file or folder')
+
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files')
 
     parser.add_argument('--crop', type=bool, default=True, help='cropping paper into segments')
@@ -38,7 +41,7 @@ def get_parser():
     parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines')
     parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines')
     parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines')
-    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use")
+    parser.add_argument('--parallel', type=int, default=4, help="number of CPUs to use")
     parser.add_argument('--plot', type=bool, default=True, help='plotting some steps in the end')
     parser.add_argument('--ramp', type=bool, default=None, help='activates the function whiteout')
     parser.add_argument('--showmasks', type=bool, default=True, help='output an image with colored masks')
@@ -176,8 +179,8 @@ def linecoords_analyse(args,image, image_param, clippingmask):
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 5  # Lowest Point of object + 5 Pixel
             if clippingmask.user == None:
-                clippingmask.width_start = linecoords.width_start - border
-                clippingmask.width_stop = linecoords.width_stop + border
+                clippingmask.width_start = int(image_param.width*0.05)
+                clippingmask.width_stop = int(image_param.width*0.95)
                 clippingmask.height_start = topline_width_stop
                 clippingmask.height_stop = 0
 
@@ -230,7 +233,7 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                         whiteout_ramp(image, linecoords)
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
-    misc.imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
+    #misc.imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     return list_linecoords, border, topline_width_stop
 
@@ -347,6 +350,7 @@ def get_inputfiles():
 
 def crass(input):
     # read image
+    print input
     args = get_parser()
     image = imread("%s" % (input), as_grey=True)
     image_param = Image_Param(image,input)
@@ -401,4 +405,4 @@ if __name__=="__main__":
         pool.map(crass, inputfiles)
         if args.splice == True:
             print "start splice"
-            splice(args, args.input)
+            splice(args, os.path.dirname(args.input)+"//out//")
