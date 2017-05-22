@@ -4,13 +4,14 @@
 #Program:  **crass**
 #Info:     **Python 2.7**
 #Author:   **Jan Kamlah**
-#Date:     **12.05.2017**
+#Date:     **22.05.2017**
 
 ####################### IMPORT ##################################
 import argparse
 import copy
 import glob
 import matplotlib.pyplot as plt
+import multiprocessing
 import numpy as np
 import os
 from scipy.ndimage import measurements
@@ -94,18 +95,15 @@ def whiteout_ramp(image, linecoords):
     #for idx in range(linecoords.width_stop):
     imagesection = image[linecoords.object]
     count = 0
-    #print imagesection.shape
     # Dilation enlarge the bright segements and cut them out off the original image
     for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
         whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
         imagesection[count,whitevalue.start:whitevalue.stop] = 255
         count +=1
-    imsave("U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\whitelines\\%s.jpg" %(linecoords.object_value), imagesection)
-    #imsave("C:\\Coding\\jpg\\whitelines\\%s.jpg" % (linecoords.object_value),imagesection)
-    #imsave("U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\whitelines\\%s.jpg" % (linecoords.object_value), imagesection)
+    #imsave("%s\\whitelines\\%s.%s" %(image_param.path,linecoords.object_value,args.extension), imagesection)
     return 0
 
-def deskew(image, image_param, args, deskew_linesize):
+def deskew(args,image, image_param, deskew_linesize):
     # Deskew
     # Calculate the angle of the points between 20% and 80% of the line
     thresh = th.threshold_sauvola(image, 31)
@@ -139,7 +137,7 @@ def deskew(image, image_param, args, deskew_linesize):
 
     return deskew_path
 
-def linecoords_analyse(image, image_param, args, clippingmask):
+def linecoords_analyse(args,image, image_param, clippingmask):
     thresh = th.threshold_sauvola(image, 31)
     binary = image > thresh
     binary = 1-binary #inverse binary
@@ -219,7 +217,7 @@ def linecoords_analyse(image, image_param, args, clippingmask):
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     return list_linecoords, border, topline_width_stop
 
-def crop(image, image_param, args, list_linecoords, clippingmask):
+def crop(args,image, image_param, list_linecoords, clippingmask):
     filepath = image_param.pathout+image_param.name
     if args.showmasks == True:
         debugimage = color.gray2rgb(copy.deepcopy(image))
@@ -268,7 +266,7 @@ def crop(image, image_param, args, list_linecoords, clippingmask):
         imsave("%s_masks.%s" % (filepath, args.extension), debugimage)
     return 0
 
-def splice(input, args):
+def splice(args,input):
     os.chdir(input)
     output = input+"\\spliced\\"
     # create outputdir
@@ -317,76 +315,87 @@ def plot(image, binary, Output):
 
     plt.show()
     return 0
-####################### MAIN ##################################
-def crass(parser):
-    ####################### INIT ##################################
-    #input = "C:\\Coding\\jpg"
-    args = parser.parse_args()
-    args.showmasks = True
-    #args = args()
-    input = args.input
-    if not os.path.isfile(input):
-        os.chdir(input)
-        inputs = []
-        for input in sorted(glob.glob("*.%s" % (args.extension))):
-            inputs.append(os.getcwd()+"\\"+input)
-    else:
-        inputs =  []
-        inputs.append(input)
-    for input in inputs:
-        print input
-        # read image
-        image = imread("%s" % (input), as_grey=True)
-        image_param = Image_Param(image,input)
-
-        # create outputdir
-        if not os.path.isdir(image_param.pathout):
-            os.mkdir(image_param.pathout)
-
-        ####################### DESKEW ##################################
-        # Deskew the loaded image
-        if True == True:
-            print "start deskew"
-            #Only values between 0-49 valid
-            #deskew_linesize
-            deskew_linesize = 20
-            image_param.deskewpath = deskew(image, image_param, args, deskew_linesize)
-            #image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
-            image = imread("%s" % (image_param.deskewpath), as_grey=True)
-            image_param = Image_Param(image, input)
-
-        ####################### ANALYSE - LINECOORDS ##################################
-        print "start linecoord-analyse"
-        clippingmask = Clippingmask(image)
-        list_linecoords, border, topline_width_stop = linecoords_analyse(image, image_param, args, clippingmask)
-        ####################### CROP ##################################
-        if True == True:
-            print "start crop"
-            crop(image, image_param, args, list_linecoords, clippingmask)
-            input = image_param.pathout
-
-    ####################### SPLICE ##################################
-    if True == True:
-        print "start splice"
-        splice(input,args)
-
-    ####################### TEST-PLOT ##################################
-    if True == False:
-        plot(image, binary, Output)
-
-####################### START ##################################
-if __name__=="__main__":
+####################### MAIN-FUNCTIONS ##################################
+def get_parser():
     ####################### PARSER-SETTINGS ###################################
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default= "U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\", help='Input file or folder')
-    parser.add_argument("--extension", type=str, choices = ["jpg"], default="jpg", help='Extension of the files')
+    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
+                        help='Input file or folder')
+    parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files')
     parser.add_argument('--showmasks', type=bool, default=True, help='output an image with colored masks')
     parser.add_argument('--minwidth', type=float, default=0.3, help='minwidth of the plumb lines')
     parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines')
     parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines')
     parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines')
     parser.add_argument('--ramp', type=bool, default=None, help='activates the function whiteout')
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use")
+    args = parser.parse_args()
+    args.showmasks = True
+    return args
 
-    print "start crass"
-    crass(parser)
+def get_inputfiles():
+    input = args.input
+    if not os.path.isfile(input):
+        os.chdir(input)
+        inputfiles = []
+        for input in sorted(glob.glob("*.%s" % (args.extension))):
+            inputfiles.append(os.getcwd() + "\\" + input)
+    else:
+        inputfiles = []
+        inputfiles.append(input)
+    return inputfiles
+
+def crass(input):
+    # read image
+    args = get_parser()
+    image = imread("%s" % (input), as_grey=True)
+    image_param = Image_Param(image,input)
+
+    # create outputdir
+    if not os.path.isdir(image_param.pathout):
+        os.mkdir(image_param.pathout)
+
+    ####################### DESKEW ##################################
+    # Deskew the loaded image
+    if True == True:
+        print "start deskew"
+        #Only values between 0-49 valid
+        #deskew_linesize
+        deskew_linesize = 20
+        image_param.deskewpath = deskew(args,image, image_param, deskew_linesize)
+        #image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
+        image = imread("%s" % (image_param.deskewpath), as_grey=True)
+        image_param = Image_Param(image, input)
+
+    ####################### ANALYSE - LINECOORDS ##################################
+    print "start linecoord-analyse"
+    clippingmask = Clippingmask(image)
+    list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
+    ####################### CROP ##################################
+    if True == True:
+        print "start crop"
+        crop(args,image, image_param, list_linecoords, clippingmask)
+        input = image_param.pathout
+
+    ####################### SPLICE ##################################
+    if True == False:
+        print "start splice"
+        splice(args,input)
+
+    ####################### TEST-PLOT ##################################
+    if True == False:
+        plot(image, binary, Output)
+
+####################### MAIN ##################################
+if __name__=="__main__":
+    args = get_parser()
+    #Read inputfiles
+    inputfiles = get_inputfiles()
+    if args.parallel < 2:
+        for input in inputfiles:
+            crass(input)
+    # Start crass with multiprocessing
+    else:
+        pool = multiprocessing.Pool(processes=args.parallel)
+        pool.map(crass, inputfiles)
