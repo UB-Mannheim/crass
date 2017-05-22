@@ -392,6 +392,7 @@ if __name__=="__main__":
     args = get_parser()
     #Read inputfiles
     inputfiles = get_inputfiles()
+    # Start crass with serialprocessing
     if args.parallel < 2:
         for input in inputfiles:
             crass(input)
