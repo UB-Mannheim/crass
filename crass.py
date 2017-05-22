@@ -23,6 +23,31 @@ from skimage.io import imsave
 import skimage.morphology as morph
 import skimage.transform as transform
 
+def get_parser():
+    ####################### PARSER-SETTINGS ###################################
+    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
+
+    # Erease -- on input and extension
+    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
+                        help='Input file or folder')
+    parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files')
+
+    parser.add_argument('--crop', type=bool, default=True, help='cropping paper into segments')
+    parser.add_argument('--deskew', type=bool, default=True, help='preprocessing: deskewing the paper')
+    parser.add_argument('--minwidth', type=float, default=0.3, help='minwidth of the plumb lines')
+    parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines')
+    parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines')
+    parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines')
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use")
+    parser.add_argument('--plot', type=bool, default=True, help='plotting some steps in the end')
+    parser.add_argument('--ramp', type=bool, default=None, help='activates the function whiteout')
+    parser.add_argument('--showmasks', type=bool, default=True, help='output an image with colored masks')
+    parser.add_argument('--splice', type=bool, default=True, help='splice the cropped segments')
+
+    args = parser.parse_args()
+    args.showmasks = True
+    return args
+
 ####################### CLASSES & METHODS ###################################
 class Clippingmask():
     def __init__(self, image):
@@ -48,14 +73,6 @@ class Linecoords():
         self.object_value = value
         self.object_matrix = copy.deepcopy(binary[object])
         self.segmenttype = None
-
-class args():
-    minwidth = 0.3
-    maxwidth = 0.95
-    minheight = 0.05
-    maxheight = 0.95
-    showmasks = None
-    ramp = None
 
 class Splice_Param():
     def __init__(self, input, parts):
@@ -316,24 +333,6 @@ def plot(image, binary, Output):
     plt.show()
     return 0
 ####################### MAIN-FUNCTIONS ##################################
-def get_parser():
-    ####################### PARSER-SETTINGS ###################################
-    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
-    # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
-                        help='Input file or folder')
-    parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files')
-    parser.add_argument('--showmasks', type=bool, default=True, help='output an image with colored masks')
-    parser.add_argument('--minwidth', type=float, default=0.3, help='minwidth of the plumb lines')
-    parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines')
-    parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines')
-    parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines')
-    parser.add_argument('--ramp', type=bool, default=None, help='activates the function whiteout')
-    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use")
-    args = parser.parse_args()
-    args.showmasks = True
-    return args
-
 def get_inputfiles():
     input = args.input
     if not os.path.isfile(input):
@@ -358,7 +357,7 @@ def crass(input):
 
     ####################### DESKEW ##################################
     # Deskew the loaded image
-    if True == True:
+    if args.deskew == True:
         print "start deskew"
         #Only values between 0-49 valid
         #deskew_linesize
@@ -373,18 +372,18 @@ def crass(input):
     clippingmask = Clippingmask(image)
     list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
     ####################### CROP ##################################
-    if True == True:
+    if args.crop == True:
         print "start crop"
         crop(args,image, image_param, list_linecoords, clippingmask)
         input = image_param.pathout
 
     ####################### SPLICE ##################################
-    if True == False:
+    if args.splice == True and args.parallel < 2:
         print "start splice"
         splice(args,input)
 
     ####################### TEST-PLOT ##################################
-    if True == False:
+    if args.plot == False:
         plot(image, binary, Output)
 
 ####################### MAIN ##################################
@@ -400,3 +399,6 @@ if __name__=="__main__":
     else:
         pool = multiprocessing.Pool(processes=args.parallel)
         pool.map(crass, inputfiles)
+        if args.splice == True:
+            print "start splice"
+            splice(args, args.input)
