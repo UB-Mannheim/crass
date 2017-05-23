@@ -10,6 +10,7 @@
 import argparse
 import copy
 import glob
+import logging
 import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
@@ -22,36 +23,44 @@ from skimage.io import imread
 from skimage.io import imsave
 import skimage.morphology as morph
 import skimage.transform as transform
+import warnings
 
+####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
-    ####################### PARSER-SETTINGS ###################################
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
 
     # Erease -- on input and extension
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0235.jpg",
+    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
                         help='Input file or folder')
+    parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
-    parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files')
-
-    parser.add_argument('--crop', type=bool, default=True, help='cropping paper into segments')
-    parser.add_argument('--deskew', type=bool, default=True, help='preprocessing: deskewing the paper')
-    parser.add_argument('--minwidth', type=float, default=0.3, help='minwidth of the plumb lines')
-    parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines')
-    parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines')
-    parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines')
-    parser.add_argument('--parallel', type=int, default=4, help="number of CPUs to use")
-    parser.add_argument('--plot', type=bool, default=True, help='plotting some steps in the end')
-    parser.add_argument('--ramp', type=bool, default=None, help='activates the function whiteout')
-    parser.add_argument('--showmasks', type=bool, default=True, help='output an image with colored masks')
-    parser.add_argument('--splice', type=bool, default=True, help='splice the cropped segments')
+    parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
+    parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
+    parser.add_argument('--minwidth', type=float, default=0.3, help='minwidth of the plumb lines, default: %(default)s')
+    parser.add_argument('--maxwidth', type=float, default=0.95, help='maxwidth of the plumb lines, default: %(default)s')
+    parser.add_argument('--minheight', type=float, default=0.05, help='minheight of the vertical lines, default: %(default)s')
+    parser.add_argument('--maxheight', type=float, default=0.95, help='maxheightof the vertical lines, default: %(default)s')
+    parser.add_argument('--parallel', type=int, default=4, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
+    parser.add_argument('--ramp', default=None, help='activates the function whiteout')
+    parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
+    parser.add_argument('--splice', action="store_false", help='splice the cropped segments')
+    parser.add_argument('-A', '--addstartheight', type=int, default=20, help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
+    parser.add_argument('-a', '--addstopheight', type=int, default=35, help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
+    parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
 
     args = parser.parse_args()
     args.showmasks = True
     return args
 
-####################### CLASSES & METHODS ###################################
+####################### LOGGER-FILE-SETTINGS ########################
+logging.basicConfig(filename=os.path.dirname(get_parser().input) + '\\Logfile_crass.log', level=logging.DEBUG,
+                    format='%(asctime)s %(message)s',
+                    datefmt='%m/%d/%Y %I:%M:%S %p')
+
+####################### CLASSES & METHODS ###########################
 class Clippingmask():
     def __init__(self, image):
         self.height_start, self.width_start = 0, 0
@@ -84,43 +93,108 @@ class Splice_Param():
         self.segmenttype = parts[len(parts)-1]
 
 ####################### FUNCTIONS ##################################
-def set_colored_mask(image, borders, color, intensity):
-    image[borders[0][0]:borders[0][0]+5,borders[1][0]:borders[1][1]] = 0
-    image[borders[0][1]-6:borders[0][1]-1, borders[1][0]:borders[1][1]] = 0
-    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][0]+5] = 0
-    image[borders[0][0]:borders[0][1], borders[1][1]-6:borders[1][1]-1] = 0
-    masked_image = np.ma.greater(image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color],55)
-    image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] += intensity
-    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color] = image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] *masked_image
+def crop(args, image, image_param, list_linecoords, clippingmask):
+    filepath = image_param.pathout + image_param.name
+    if args.showmasks == True:
+        debugimage = color.gray2rgb(copy.deepcopy(image))
+    for idx, linecoords in enumerate(list_linecoords):
+        # Header
+        if idx == 0:
+            if not args.quiet: print "header"
+            roi = image[0:linecoords.height_start - 2, 0:image_param.width]  # region of interest
+            imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
+            if args.showmasks == True:
+                set_colored_mask(debugimage, [[0, linecoords.height_start - 2],
+                                              [0, image_param.width]], 0, 100)
+
+        # Crop middle segments
+        if linecoords.segmenttype == 'B':
+            if not args.quiet: print "blank"
+            # Add sum extra space to the cords
+            roi = image[linecoords.height_start + 2:linecoords.height_stop - 2,
+                  linecoords.width_start:linecoords.width_stop]  # region of interest
+            imsave("%s_%d_c.%s" % (filepath, idx, args.extension), roi)
+            if args.showmasks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start + 2, linecoords.height_stop - 2],
+                                              [linecoords.width_start, linecoords.width_stop]], 1, 220)
+        if linecoords.segmenttype == 'P':
+            if idx == 0:
+                print "plumb-first"
+                linecoords.height_start = clippingmask.height_start + 17
+                if not args.quiet: print "plumb"
+            roi = image[
+                  linecoords.height_start - args.addstartheight:linecoords.height_stop + args.addstopheight,
+                  clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
+            imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
+            if args.showmasks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheight,
+                                               linecoords.height_stop + args.addstopheight],
+                                              [clippingmask.width_start, linecoords.width_stop - 2]], 2, 180)
+            roi = image[
+                  linecoords.height_start - args.addstartheight:linecoords.height_stop + args.addstopheight,
+                  linecoords.width_start + 1:clippingmask.width_stop]
+            imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
+            if args.showmasks == True:
+                set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheight,
+                                               linecoords.height_stop + args.addstopheight],
+                                              [linecoords.width_start + 1, clippingmask.width_stop]], 0, 180)
+
+        # Footer
+        if idx == len(list_linecoords) - 1:
+            if not args.quiet: print "footer"
+            roi = image[linecoords.height_stop + 2:image_param.height,
+                  0:image_param.width]  # region of interest
+            imsave("%s_%d_f.%s" % (filepath, idx, args.extension), roi)
+            if args.showmasks == True:
+                set_colored_mask(debugimage,
+                                 [[linecoords.height_stop + 2, image_param.height], [0, image_param.width]], 1,
+                                 100)
+    if args.showmasks == True:
+        imsave("%s_masks.%s" % (filepath, args.extension), debugimage)
     return 0
 
-def get_height(s):
-    return s[0].stop-s[0].start
+def cropping(input):
+    # read image
+    print input
+    args = get_parser()
+    try:
+        image = imread("%s" % input, as_grey=True)
+    except IOError:
+        print("cannot open %s" % input)
+        logging.warning("cannot open %s" % input)
+        return 1
 
-def get_width(s):
-    return s[1].stop-s[1].start
+    image_param = Image_Param(image, input)
 
-def get_linecoords(s):
-    return [[s[0].start,s[0].stop],[s[1].start,s[1].stop]]
+    # create outputdir
+    if not os.path.isdir(image_param.pathout):
+        os.mkdir(image_param.pathout)
 
-def get_mindist(s,length):
-    d1 = s[1].start
-    d2 = length - s[1].stop
-    if d1 < d2:
-        return d1-int(d1*0.2)
-    else:
-        return d2-int(d2*0.2)
+    ####################### DESKEW ####################################
+    # Deskew the loaded image
+    if args.deskew == True:
+        if not args.quiet: print "start deskew"
+        # Only values between 0-49 valid
+        # deskew_linesize
+        deskew_linesize = 20
+        image_param.deskewpath = deskew(args, image, image_param, deskew_linesize)
+        # image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
+        try:
+            image = imread("%s" % (image_param.deskewpath), as_grey=True)
+        except IOError:
+            print("cannot open %s" % input)
+            logging.warning("cannot open %s" % input)
+            return 1
+        image_param = Image_Param(image, input)
 
-def whiteout_ramp(image, linecoords):
-    #for idx in range(linecoords.width_stop):
-    imagesection = image[linecoords.object]
-    count = 0
-    # Dilation enlarge the bright segements and cut them out off the original image
-    for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
-        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
-        imagesection[count,whitevalue.start:whitevalue.stop] = 255
-        count +=1
-    #imsave("%s\\whitelines\\%s.%s" %(image_param.path,linecoords.object_value,args.extension), imagesection)
+        ####################### ANALYSE - LINECOORDS #######################
+        if not args.quiet: print "start linecoord-analyse"
+    clippingmask = Clippingmask(image)
+    list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
+    ####################### CROP #######################################
+    if args.crop == True:
+        if not args.quiet: print "start crop"
+        crop(args, image, image_param, list_linecoords, clippingmask)
     return 0
 
 def deskew(args,image, image_param, deskew_linesize):
@@ -152,10 +226,42 @@ def deskew(args,image, image_param, deskew_linesize):
             args.ramp = True
             deskew_image = transform.rotate(image, deskewangle)
             deskew_path = "%s_deskew.%s" % (image_param.pathout+image_param.name, args.extension)
-            imsave(deskew_path, deskew_image)
+            with warnings.catch_warnings():
+                #Transform rotate convert the img to float and save convert it back
+                warnings.simplefilter("ignore")
+                imsave(deskew_path, deskew_image)
             break
 
     return deskew_path
+
+def get_inputfiles(args):
+    input = args.input
+    if not os.path.isfile(input):
+        os.chdir(input)
+        inputfiles = []
+        for input in sorted(glob.glob("*.%s" % (args.extension))):
+            inputfiles.append(os.getcwd() + "\\" + input)
+    else:
+        inputfiles = []
+        inputfiles.append(input)
+    return inputfiles
+
+def get_height(s):
+    return s[0].stop-s[0].start
+
+def get_linecoords(s):
+    return [[s[0].start,s[0].stop],[s[1].start,s[1].stop]]
+
+def get_mindist(s,length):
+    d1 = s[1].start
+    d2 = length - s[1].stop
+    if d1 < d2:
+        return d1-int(d1*0.2)
+    else:
+        return d2-int(d2*0.2)
+
+def get_width(s):
+    return s[1].stop-s[1].start
 
 def linecoords_analyse(args,image, image_param, clippingmask):
     thresh = th.threshold_sauvola(image, 31)
@@ -175,16 +281,20 @@ def linecoords_analyse(args,image, image_param, clippingmask):
         if args.minwidth * image_param.width <  get_width(b) < args.maxwidth * image_param.width \
                 and int(image_param.height * 0.04) <  linecoords.height_stop < int(image_param.height * 0.3) and count_width == 0 and linecoords.height_start != 0:
 
-            # Distance Calculation - defining the cropmask
+            # Distance Calculation - defining the clippingmask
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 5  # Lowest Point of object + 5 Pixel
             if clippingmask.user == None:
-                clippingmask.width_start = int(image_param.width*0.05)
-                clippingmask.width_stop = int(image_param.width*0.95)
+                clippingmask.width_start = linecoords.width_start - border
+                if clippingmask.width_start > int(image_param.width * 0.05):
+                    clippingmask.width_start = int(image_param.width * 0.05)
+                clippingmask.width_stop = linecoords.width_stop + border
+                if clippingmask.width_stop < int(image_param.width*0.95):
+                    clippingmask.width_stop = int(image_param.width*0.95)
                 clippingmask.height_start = topline_width_stop
                 clippingmask.height_stop = 0
 
-            # Test for cropping the area under the topline
+            # Test for cropping the area under the first vertical line
             #roi = image[hobj_bottom:image_param.height, border:image_param.width - border]  # region of interest
             #imsave("%s_crop.%s" % (image_param.pathout+image_param.name, args.extension), roi)
 
@@ -233,90 +343,11 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                         whiteout_ramp(image, linecoords)
             count_height += 1
             labels[b][labels[b] == i + 1] = 0
-    #misc.imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     return list_linecoords, border, topline_width_stop
 
-def crop(args,image, image_param, list_linecoords, clippingmask):
-    filepath = image_param.pathout+image_param.name
-    if args.showmasks == True:
-        debugimage = color.gray2rgb(copy.deepcopy(image))
-        print debugimage.shape
-    for idx, linecoords in enumerate(list_linecoords):
-
-        #Header
-        if idx == 0:
-            print "header"
-            roi = image[0:linecoords.height_start -2 , 0:image_param.width]  # region of interest
-            imsave("%s_%d_h.%s" % (filepath, idx,args.extension), roi)
-            if args.showmasks == True:
-                set_colored_mask(debugimage, [[0, linecoords.height_start -2],
-                                              [0, image_param.width]], 0, 100)
-
-        # Crop middle segments
-        if linecoords.segmenttype == 'B':
-            print "blank"
-            # Add sum extra space to the cords
-            roi = image[linecoords.height_start + 2:linecoords.height_stop - 2, linecoords.width_start:linecoords.width_stop]  # region of interest
-            imsave("%s_%d_c.%s" % (filepath, idx,args.extension),roi)
-            if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start + 2,linecoords.height_stop - 2], [linecoords.width_start,linecoords.width_stop]], 1, 220)
-        if linecoords.segmenttype == 'P':
-            if idx == 0:
-                print "plumb-first"
-                linecoords.height_start = clippingmask.height_start+17
-            print "plumb"
-            roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
-            imsave("%s_%d_a.%s" % (filepath, idx,args.extension), roi)
-            if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start - 15,linecoords.height_stop + 35], [clippingmask.width_start,linecoords.width_stop - 2]], 2, 180)
-            roi = image[linecoords.height_start - 15:linecoords.height_stop + 35, linecoords.width_start+1:clippingmask.width_stop]
-            imsave("%s_%d_b.%s" % (filepath, idx,args.extension), roi)
-            if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start - 15,linecoords.height_stop + 35], [linecoords.width_start+1,clippingmask.width_stop]], 0, 180)
-
-        # Footer
-        if idx == len(list_linecoords)-1:
-            print "footer"
-            roi = image[linecoords.height_stop + 2:image_param.height, 0:image_param.width]  # region of interest
-            imsave("%s_%d_f.%s" % (filepath, idx,args.extension), roi)
-            if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_stop + 2,image_param.height], [0,image_param.width]], 1, 100)
-    if args.showmasks == True:
-        imsave("%s_masks.%s" % (filepath, args.extension), debugimage)
-    return 0
-
-def splice(args,input):
-    os.chdir(input)
-    output = input+"\\spliced\\"
-    # create outputdir
-    list_splice = []
-    if not os.path.isdir(output):
-        os.mkdir(output)
-    for image in sorted(glob.glob("*.%s" % (args.extension))):
-        Sep = ["a", "b", "c"]
-        if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in Sep:
-            splice_param = Splice_Param(input, os.path.splitext(image)[0].split("_"))
-            if splice_param.segmenttype != 'c':
-                list_splice.append(image)
-            else:
-                print "splice %s" % (image)
-                list_splice.append(image)
-                segments = [misc.imread(img,mode='RGB') for img in list_splice]
-                img_height = sum(segment.shape[0] for segment in segments)
-                img_width = max(segment.shape[1] for segment in segments)
-                spliced_image = np.ones((img_height, img_width, 3), dtype=np.uint8)
-                y = 0
-                for segment in segments:
-                    h, w, d = segment.shape
-                    spliced_image[y:y + h, 0:w] = segment
-                    y += h
-                imsave("%s" % (output+"spliced"+image),spliced_image)
-                list_splice = []
-    return 0
-
 def plot(image, binary, Output):
-    print "start plot"
+    if not args.quiet: print "start plot"
 
     fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
     ax = axes.ravel()
@@ -335,74 +366,81 @@ def plot(image, binary, Output):
 
     plt.show()
     return 0
-####################### MAIN-FUNCTIONS ##################################
-def get_inputfiles():
-    input = args.input
-    if not os.path.isfile(input):
-        os.chdir(input)
-        inputfiles = []
-        for input in sorted(glob.glob("*.%s" % (args.extension))):
-            inputfiles.append(os.getcwd() + "\\" + input)
-    else:
-        inputfiles = []
-        inputfiles.append(input)
-    return inputfiles
 
-def crass(input):
-    # read image
-    print input
+def set_colored_mask(image, borders, color, intensity):
+    image[borders[0][0]:borders[0][0]+5,borders[1][0]:borders[1][1]] = 0
+    image[borders[0][1]-6:borders[0][1]-1, borders[1][0]:borders[1][1]] = 0
+    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][0]+5] = 0
+    image[borders[0][0]:borders[0][1], borders[1][1]-6:borders[1][1]-1] = 0
+    masked_image = np.ma.greater(image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color],55)
+    image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] += intensity
+    image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color] = image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] *masked_image
+    return 0
+
+def splice(args,input):
+    os.chdir(input)
+    output = input+"\\spliced\\"
+    list_splice = []
+    if not os.path.isdir(output):
+        os.mkdir(output)
+    for image in sorted(glob.glob("*.%s" % (args.extension))):
+        Sep = ["a", "b", "c"]
+        if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in Sep:
+            splice_param = Splice_Param(input, os.path.splitext(image)[0].split("_"))
+            if splice_param.segmenttype != 'c':
+                list_splice.append(image)
+            else:
+                if not args.quiet: print "splice %s" % (image)
+                list_splice.append(image)
+                segments = [misc.imread(img,mode='RGB') for img in list_splice]
+                img_height = sum(segment.shape[0] for segment in segments)
+                img_width = max(segment.shape[1] for segment in segments)
+                spliced_image = np.ones((img_height, img_width, 3), dtype=np.uint8)
+                y = 0
+                for segment in segments:
+                    h, w, d = segment.shape
+                    spliced_image[y:y + h, 0:w] = segment
+                    y += h
+                imsave("%s" % (output+"spliced"+image),spliced_image)
+                list_splice = []
+    return 0
+
+def whiteout_ramp(image, linecoords):
+    #for idx in range(linecoords.width_stop):
+    imagesection = image[linecoords.object]
+    count = 0
+    # Dilation enlarge the bright segements and cut them out off the original image
+    for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
+        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
+        imagesection[count,whitevalue.start:whitevalue.stop] = 255
+        count +=1
+    #imsave("%s\\whitelines\\%s.%s" %(image_param.path,linecoords.object_value,args.extension), imagesection)
+    return 0
+
+####################### MAIN-FUNCTIONS ############################################
+def crass():
     args = get_parser()
-    image = imread("%s" % (input), as_grey=True)
-    image_param = Image_Param(image,input)
-
-    # create outputdir
-    if not os.path.isdir(image_param.pathout):
-        os.mkdir(image_param.pathout)
-
-    ####################### DESKEW ##################################
-    # Deskew the loaded image
-    if args.deskew == True:
-        print "start deskew"
-        #Only values between 0-49 valid
-        #deskew_linesize
-        deskew_linesize = 20
-        image_param.deskewpath = deskew(args,image, image_param, deskew_linesize)
-        #image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
-        image = imread("%s" % (image_param.deskewpath), as_grey=True)
-        image_param = Image_Param(image, input)
-
-    ####################### ANALYSE - LINECOORDS ##################################
-    print "start linecoord-analyse"
-    clippingmask = Clippingmask(image)
-    list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
-    ####################### CROP ##################################
-    if args.crop == True:
-        print "start crop"
-        crop(args,image, image_param, list_linecoords, clippingmask)
-        input = image_param.pathout
-
-    ####################### SPLICE ##################################
-    if args.splice == True and args.parallel < 2:
-        print "start splice"
-        splice(args,input)
-
-    ####################### TEST-PLOT ##################################
-    if args.plot == False:
-        plot(image, binary, Output)
-
-####################### MAIN ##################################
-if __name__=="__main__":
-    args = get_parser()
-    #Read inputfiles
-    inputfiles = get_inputfiles()
+    # Read inputfiles
+    inputfiles = get_inputfiles(args)
+    ####################### CRASS #######################################
+    ####################### CROP  #######################################
     # Start crass with serialprocessing
     if args.parallel < 2:
         for input in inputfiles:
-            crass(input)
+            cropping(input)
     # Start crass with multiprocessing
     else:
         pool = multiprocessing.Pool(processes=args.parallel)
-        pool.map(crass, inputfiles)
-        if args.splice == True:
-            print "start splice"
-            splice(args, os.path.dirname(args.input)+"//out//")
+        pool.map(cropping, inputfiles)
+    ####################### SPLICE #######################################
+    if args.splice == True:
+        if not args.quiet: print "start splice"
+        splice(args, os.path.dirname(args.input) + "//out//")
+
+    ####################### TEST-PLOT ##################################
+    if args.plot == None:
+        plot(image, binary, Output)
+
+####################### MAIN ############################################
+if __name__=="__main__":
+    crass()
