@@ -1,4 +1,4 @@
-![crass logo](doc/img/crass.png)
+![crass logo](doc/img/crass_logo.png)
 # crass
 =======
 Originally written by Jan Kamlah.
