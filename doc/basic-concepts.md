@@ -42,12 +42,12 @@ The *image-file* format accepted by `crass` is *jpg*.
 
 ### Crop
 1. Compute the clipping masks.
-    1. There are 5 types of segments:
-        1. h = header
-        2. a = left side separated by a horizontal line
-        3. b = right side separated by a horizontal line
-        4. c = space between header and horizontal line or horizontal line and another horizontal line
-        5. f = footer
+    * There are 5 types of segments:
+        - h = header
+        - a = left side separated by a horizontal line
+        - b = right side separated by a horizontal line
+        - c = space between header and horizontal line or horizontal line and another horizontal line
+        - f = footer
 2. Crop the single segments 
     (by default: the footer and header information will also be stored)
     

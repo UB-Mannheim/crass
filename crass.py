@@ -30,10 +30,10 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
 
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0008.jpg",
+    #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0008.jpg",
+    #                   help='Input file or folder')
+    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
                         help='Input file or folder')
-    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
-    #                    help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
