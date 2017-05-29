@@ -30,10 +30,10 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
 
     # Erease -- on input and extension
-    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
-    #                    help='Input file or folder')
-    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
+    parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0008.jpg",
                         help='Input file or folder')
+    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
+    #                    help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
@@ -47,6 +47,14 @@ def get_parser():
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
     parser.add_argument('--splice', action="store_false", help='splice the cropped segments')
+    parser.add_argument("--splicetypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
+                        default=['a', 'b', 'c'],
+                        help='Segmenttypes to be spliced, default: %(default)s')
+    parser.add_argument("--splicemaintype", type=str, choices=['a', 'b', 'c', 'f', 'h'], default='c',
+                        help='Segmenttype that indicates a new splice process, default: %(default)s')
+    #Change to "store_false" for release
+    parser.add_argument('--splicemaintypestart', action="store_true",
+                        help='The maintype of splicetyps will be placed on the end')
     parser.add_argument('-A', '--addstartheight', type=int, default=20, help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheight', type=int, default=35, help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
@@ -113,7 +121,7 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             # Add sum extra space to the cords
             roi = image[linecoords.height_start + 2:linecoords.height_stop - 2,
                   linecoords.width_start:linecoords.width_stop]  # region of interest
-            imsave("%s_%d_c.%s" % (filepath, idx, args.extension), roi)
+            imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 set_colored_mask(debugimage, [[linecoords.height_start + 2, linecoords.height_stop - 2],
                                               [linecoords.width_start, linecoords.width_stop]], 1, 220)
@@ -125,15 +133,14 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             roi = image[
                   linecoords.height_start - args.addstartheight:linecoords.height_stop + args.addstopheight,
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
-            imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
+            imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheight,
                                                linecoords.height_stop + args.addstopheight],
                                               [clippingmask.width_start, linecoords.width_stop - 2]], 2, 180)
-            roi = image[
-                  linecoords.height_start - args.addstartheight:linecoords.height_stop + args.addstopheight,
+            roi = image[linecoords.height_start - args.addstartheight:linecoords.height_stop + args.addstopheight,
                   linecoords.width_start + 1:clippingmask.width_stop]
-            imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
+            imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheight,
                                                linecoords.height_stop + args.addstopheight],
@@ -144,7 +151,7 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             if not args.quiet: print "footer"
             roi = image[linecoords.height_stop + 2:image_param.height,
                   0:image_param.width]  # region of interest
-            imsave("%s_%d_f.%s" % (filepath, idx, args.extension), roi)
+            imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
             if args.showmasks == True:
                 set_colored_mask(debugimage,
                                  [[linecoords.height_stop + 2, image_param.height], [0, image_param.width]], 1,
@@ -384,14 +391,14 @@ def splice(args,input):
     if not os.path.isdir(output):
         os.mkdir(output)
     for image in sorted(glob.glob("*.%s" % (args.extension))):
-        Sep = ["a", "b", "c"]
-        if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in Sep:
+        if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in args.splicetypes:
             splice_param = Splice_Param(input, os.path.splitext(image)[0].split("_"))
-            if splice_param.segmenttype != 'c':
+            if splice_param.segmenttype != args.splicemaintype:
                 list_splice.append(image)
             else:
                 if not args.quiet: print "splice %s" % (image)
-                list_splice.append(image)
+                if not args.splicemaintypestart:
+                    list_splice.append(image)
                 segments = [misc.imread(img,mode='RGB') for img in list_splice]
                 img_height = sum(segment.shape[0] for segment in segments)
                 img_width = max(segment.shape[1] for segment in segments)
@@ -403,6 +410,8 @@ def splice(args,input):
                     y += h
                 imsave("%s" % (output+"spliced"+image),spliced_image)
                 list_splice = []
+                if args.splicemaintypestart:
+                    list_splice.append(image)
     return 0
 
 def whiteout_ramp(image, linecoords):
