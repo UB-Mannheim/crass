@@ -32,7 +32,10 @@ def get_parser():
     # Erease -- on input and extension
     #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0008.jpg",
     #                   help='Input file or folder')
-    parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0804.jpg",
+    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
+    #                    help='Input file or folder')
+    parser.add_argument("--input", type=str,
+                        default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -50,7 +53,7 @@ def get_parser():
     parser.add_argument('--maxwidthver', type=float, default=0.022, help='maxwidth of the vertical lines, default: %(default)s')
     parser.add_argument('--minwidthvermask', type=float, default=0.35, help='minwidth of the vertical lines mask (search area), default: %(default)s')
     parser.add_argument('--maxwidthvermask', type=float, default=0.75, help='maxwidth of the vertical lines mask (search area), default: %(default)s')
-    parser.add_argument('--parallel', type=int, default=4, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -190,7 +193,10 @@ def cropping(input):
 
     # create outputdir
     if not os.path.isdir(image_param.pathout):
-        os.mkdir(image_param.pathout)
+        try:
+            os.mkdir(image_param.pathout)
+        except IOError:
+            print("cannot create out directoy")
 
     ####################### DESKEW ####################################
     # Deskew the loaded image
@@ -232,10 +238,9 @@ def deskew(args,image, image_param, deskew_linesize):
         linecoords = Linecoords(image, i, b)
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
-        if args.minwidthpl * image_param.width < get_width(b) < args.maxwidthpl * image_param.width \
-                and image_param.height * args.minheightpl < get_height(b) < image_param.height * args.maxheightpl \
-                and int(image_param.height * args.minheightpl) < linecoords.height_stop < int(image_param.height * args.maxheightpl) and linecoords.height_start != 0:
-
+        if int(args.minwidthpl * image_param.width) < get_width(b) < int(args.maxwidthpl * image_param.width) \
+                and int(image_param.height * args.minheightpl) < get_height(b) < int(image_param.height * args.maxheightpl) \
+                and int(image_param.height * args.minheightplmask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheightplmask) and linecoords.height_start != 0:
 
             obj_height, ob_jwidth = binary[b].shape
             obj_width_prc = ob_jwidth / 100
@@ -462,8 +467,12 @@ def crass():
         pool.map(cropping, inputfiles)
     ####################### SPLICE #######################################
     if args.splice == True:
-        if not args.quiet: print "start splice"
-        splice(args, os.path.dirname(args.input) + "//out//")
+        if not args.splicemaintype in args.splicetypes:
+                print("%s is not part of the pattern %s" % (args.splicemaintype,args.splicetypes))
+                logging.warning("Input error by user!")
+        else:
+            if not args.quiet: print "start splice"
+            splice(args, os.path.dirname(args.input) + "//out//")
 
     ####################### TEST-PLOT ##################################
     if args.plot == None:
