@@ -34,7 +34,7 @@ def get_parser():
     #                   help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0008.jpg",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0628.jpg",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -46,15 +46,19 @@ def get_parser():
     parser.add_argument('--maxheightpl', type=float, default=0.03,help='maxheight of the plumb lines, default: %(default)s')
     parser.add_argument('--minheightplmask', type=float, default=0.04, help='minheight of the plumb lines mask (search area), default: %(default)s')
     parser.add_argument('--maxheightplmask', type=float, default=0.3, help='maxheight of the plumb lines mask (search area), default: %(default)s')
-    parser.add_argument('--minheightver', type=float, default=0.035, help='minheight of the vertical lines, default: %(default)s') # Value of 0.035 is tested (before 0.05)
+    parser.add_argument('--minheightver', type=float, default=0.0375, help='minheight of the vertical lines, default: %(default)s') # Value of 0.035 is tested (before 0.05)
     parser.add_argument('--maxheightver', type=float, default=0.95, help='maxheightof the vertical lines, default: %(default)s')
     parser.add_argument('--minwidthver', type=float, default=0.00, help='minwidth of the vertical lines, default: %(default)s')
     parser.add_argument('--maxwidthver', type=float, default=0.022, help='maxwidth of the vertical lines, default: %(default)s')
     parser.add_argument('--minwidthvermask', type=float, default=0.35, help='minwidth of the vertical lines mask (search area), default: %(default)s')
     parser.add_argument('--maxwidthvermask', type=float, default=0.75, help='maxwidth of the vertical lines mask (search area), default: %(default)s')
-    parser.add_argument('--minsizeblank', type=float, default=0.015,
+    parser.add_argument('--maxgradientver', type=float, default=0.05,
+                        help='max gradient of the vertical lines: %(default)s')
+    parser.add_argument('--minsizeblank', type=float, default=0.016,
                         help='min size of the blank area between to vertical lines, default: %(default)s')
-    parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--minsizeblankobolustop', type=float, default=0.014,
+                        help='min size of the blank area between to vertical lines, default: %(default)s')
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -303,20 +307,17 @@ def linecoords_analyse(args,image, image_param, clippingmask):
     count_width = 0
     list_linecoords = [] # Init list of linecoordinates the format is: [0]: width.start, width.stopt,
     # [1]:height.start, height.stop, [2]: Type of line [B = blank, P = plumb]
-
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
-        topline_height_start = 0
+
         linecoords = Linecoords(labels, i, b)
         if args.minwidthpl * image_param.width <  get_width(b) < args.maxwidthpl * image_param.width \
                 and image_param.height*args.minheightpl < get_height(b) < image_param.height*args.maxheightpl \
                 and int(image_param.height * args.minheightplmask) <  linecoords.height_stop < int(image_param.height * args.maxheightplmask) and count_width == 0 and linecoords.height_start != 0:
-
             # Distance Calculation - defining the clippingmask
             border = get_mindist(b, image_param.width)
-            topline_width_stop = b[0].stop + 5  # Lowest Point of object + 5 Pixel
-            topline_height_start = b[1].start+2
+            topline_width_stop = b[0].stop + 2 # Lowest Point of object + 2 Pixel
             if clippingmask.user == None:
                 clippingmask.width_start = linecoords.width_start - border
                 if clippingmask.width_start > int(image_param.width * 0.05):
@@ -324,7 +325,7 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                 clippingmask.width_stop = linecoords.width_stop + border
                 if clippingmask.width_stop < int(image_param.width*0.95):
                     clippingmask.width_stop = int(image_param.width*0.95)
-                clippingmask.height_start = topline_width_stop
+                clippingmask.height_start = copy.deepcopy(topline_width_stop)
                 clippingmask.height_stop = 0
 
             # Test for cropping the area under the first vertical line
@@ -334,14 +335,13 @@ def linecoords_analyse(args,image, image_param, clippingmask):
             # Get coordinats of the line
             labels[b][labels[b] == i + 1] = 0
             count_width += 1
-
         if args.minheightver * image_param.height < get_height(b) < args.maxheightver * image_param.height \
                 and image_param.width*args.minwidthver < get_width(b) < image_param.width*args.maxwidthver \
                 and int(image_param.width*args.minwidthvermask) < (linecoords.width_start+linecoords.width_stop)/2 < int(image_param.width*args.maxwidthvermask) \
-                and list_linecoords[count_height - 1].height_stop < list_linecoords[count_height].height_stop:   #Test argument to filter braces
+                and float(get_width(b))/float(get_height(b)) < args.maxgradientver:
             linecoords.segmenttype = 'P' # Defaultvalue for segmenttype 'P' for plumb lines
             if count_height == 0:
-                if b[0].start - topline_width_stop > image_param.height*args.minsizeblank:
+                if b[0].start - topline_width_stop > image_param.height*(args.minsizeblank+args.minsizeblankobolustop):
                     blankline = Linecoords(labels,i,b)
                     blankline.segmenttype = 'B'
                     blankline.height_start = topline_width_stop
@@ -350,16 +350,20 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                     blankline.width_stop = image_param.width - border
                     list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
+                    if args.ramp != None:
+                     whiteout_ramp(image, linecoords)
                     list_linecoords.append(copy.deepcopy(linecoords))
+                    count_height += 1
                 else:
                     # Should fix to short vertical lines, in the height to top if they appear before any B Part in the image
-                    if topline_height_start > 0:
-                        linecoords.height_start = topline_height_start
+                    if topline_width_stop > 0:
+                        linecoords.height_start = topline_width_stop + args.addstartheightab
                     list_linecoords.append(copy.deepcopy(linecoords))
-                if args.ramp != None:
-                    whiteout_ramp(image, linecoords)
-
-            elif count_height != 0:
+                    count_height += 1
+                    if args.ramp != None:
+                        whiteout_ramp(image, linecoords)
+            elif list_linecoords[count_height - 1].height_stop < b[0].stop:
+                #Test argument to filter braces
                 if b[0].start - list_linecoords[count_height - 1].height_stop > image_param.height*args.minsizeblank:
                     blankline = Linecoords(labels,i,b)
                     blankline.segmenttype = 'B'
@@ -372,13 +376,14 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                     list_linecoords.append(copy.deepcopy(linecoords))
                     if args.ramp != None:
                         whiteout_ramp(image, linecoords)
+                    count_height += 1
+                    labels[b][labels[b] == i + 1] = 0
                 else:
                     if args.ramp != None:
-                        whiteout_ramp(image, linecoords)
+                         whiteout_ramp(image, linecoords)
+                    print b[0].stop
                     list_linecoords[count_height - 1].height_stop = b[0].stop
-                    count_height -= 1
-            count_height += 1
-            labels[b][labels[b] == i + 1] = 0
+                    labels[b][labels[b] == i + 1] = 0
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     return list_linecoords, border, topline_width_stop
 
