@@ -142,17 +142,15 @@ process. (Default. a,b and c)
 ### Splicemaintype
 The splicemaintype starts or ends (depending on the *splicemaintypestart*-Option) the splicepattern.
 
-#### Splicemaintypestart
-The splicemaintypestart specifies if the splicemaintype starts or ends the splicepattern.
-(Default: Ends)
+#### Splicemaintypestop
+The splicemaintypestop set the maintype to the end of each segment not the start (default).
 
-    ./crass (...options...) --splicetypes a,b,f
-    ./crass (...options...) --splicemaintype f
+    ./crass (...options...) --splicetypes a,b,h
+    ./crass (...options...) --splicemaintype h
 
-Only the segments of the types a, b and f will be considered in the splicing
-process. The pattern will end with a f-segment. There can be several a and b segments
+Only the segments of the types a, b and h will be considered in the splicing
+process. The pattern will start with a h-segment. There can be several a and b segments
 in between.
-
 
 [1]: http://scikit-image.org/docs/dev/auto_examples/segmentation/plot_niblack_sauvola.html
 [2]: http://scikit-image.org/docs/dev/api/skimage.filters.html#skimage.filters.threshold_sauvola
