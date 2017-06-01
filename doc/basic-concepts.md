@@ -35,8 +35,8 @@ The *image-file* format accepted by `crass` is *jpg*.
 ![Deskew](img/basic_concept_deskew.png)
 
 ### Line Analyse
-1. Find the top or bottom vertical line.
-1. Finds all horizontal (plumb) lines in the middle (by default) of the page.
+1. Find the top or bottom horizontal line.
+1. Finds all vertical lines in the middle (by default) of the page.
 
 ![Deskew](img/basic_concept_line_analyse.png)
 
@@ -44,9 +44,9 @@ The *image-file* format accepted by `crass` is *jpg*.
 1. Compute the clipping masks.
     * There are 5 types of segments:
         - h = header
-        - a = left side separated by a horizontal line
-        - b = right side separated by a horizontal line
-        - c = space between header and horizontal line or horizontal line and another horizontal line
+        - a = left side separated by a vertical line
+        - b = right side separated by a vertical line
+        - c = space between header and vertical line or vertical line and another vertical line
         - f = footer
 2. Crop the single segments 
     (by default: the footer and header information will also be stored)

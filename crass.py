@@ -34,30 +34,36 @@ def get_parser():
     #                   help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0628.jpg",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0007.jpg",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
+    parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
+
+    parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
+    parser.add_argument('-C', '--addstartheightc', type=float, default=-0.005, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (startheight), default: %(default)s')
+    parser.add_argument('-c', '--addstopheightc', type=float, default=0.0, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
+    parser.add_argument('--bgcolor', type=int, default=0, choices=np.arange(255),help='Backgroundcolor of the splice image (0=black,...255=white): %(default)s')
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
-    parser.add_argument('--minwidthpl', type=float, default=0.3, help='minwidth of the plumb lines, default: %(default)s')
-    parser.add_argument('--maxwidthpl', type=float, default=0.95, help='maxwidth of the plumb lines, default: %(default)s')
-    parser.add_argument('--minheightpl', type=float, default=0.00,help='minheight of the plumb lines, default: %(default)s')
-    parser.add_argument('--maxheightpl', type=float, default=0.03,help='maxheight of the plumb lines, default: %(default)s')
-    parser.add_argument('--minheightplmask', type=float, default=0.04, help='minheight of the plumb lines mask (search area), default: %(default)s')
-    parser.add_argument('--maxheightplmask', type=float, default=0.3, help='maxheight of the plumb lines mask (search area), default: %(default)s')
-    parser.add_argument('--minheightver', type=float, default=0.0375, help='minheight of the vertical lines, default: %(default)s') # Value of 0.035 is tested (before 0.05)
-    parser.add_argument('--maxheightver', type=float, default=0.95, help='maxheightof the vertical lines, default: %(default)s')
-    parser.add_argument('--minwidthver', type=float, default=0.00, help='minwidth of the vertical lines, default: %(default)s')
-    parser.add_argument('--maxwidthver', type=float, default=0.022, help='maxwidth of the vertical lines, default: %(default)s')
-    parser.add_argument('--minwidthvermask', type=float, default=0.35, help='minwidth of the vertical lines mask (search area), default: %(default)s')
-    parser.add_argument('--maxwidthvermask', type=float, default=0.75, help='maxwidth of the vertical lines mask (search area), default: %(default)s')
-    parser.add_argument('--maxgradientver', type=float, default=0.05,
-                        help='max gradient of the vertical lines: %(default)s')
-    parser.add_argument('--minsizeblank', type=float, default=0.016,
-                        help='min size of the blank area between to vertical lines, default: %(default)s')
-    parser.add_argument('--minsizeblankobolustop', type=float, default=0.014,
-                        help='min size of the blank area between to vertical lines, default: %(default)s')
+    parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0, 0.5),
+                        help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
+    parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
+    parser.add_argument('--maxwidthhor', type=float, default=0.95,choices=np.arange(-1.0, 1.0), help='maxwidth of the horizontal lines, default: %(default)s')
+    parser.add_argument('--minheighthor', type=float, default=0.00, choices=np.arange(0, 1.0), help='minheight of the horizontal lines, default: %(default)s')
+    parser.add_argument('--maxheighthor', type=float, default=0.03, choices=np.arange(0, 1.0), help='maxheight of the horizontal lines, default: %(default)s')
+    parser.add_argument('--minheighthormask', type=float, default=0.04, choices=np.arange(0, 1.0), help='minheight of the horizontal lines mask (search area), default: %(default)s')
+    parser.add_argument('--maxheighthormask', type=float, default=0.3, choices=np.arange(0, 1.0), help='maxheight of the horizontal lines mask (search area), default: %(default)s')
+    parser.add_argument('--minheightver', type=float, default=0.0375, choices=np.arange(0, 1.0), help='minheight of the vertical lines, default: %(default)s')  # Value of 0.035 is tested (before 0.05)
+    parser.add_argument('--maxheightver', type=float, default=0.95, choices=np.arange(0, 1.0), help='maxheightof the vertical lines, default: %(default)s')
+    parser.add_argument('--minwidthver', type=float, default=0.00, choices=np.arange(0, 1.0), help='minwidth of the vertical lines, default: %(default)s')
+    parser.add_argument('--maxwidthver', type=float, default=0.022, choices=np.arange(0, 1.0), help='maxwidth of the vertical lines, default: %(default)s')
+    parser.add_argument('--minwidthvermask', type=float, default=0.35, choices=np.arange(0, 1.0), help='minwidth of the vertical lines mask (search area), default: %(default)s')
+    parser.add_argument('--maxwidthvermask', type=float, default=0.75, choices=np.arange(0, 1.0), help='maxwidth of the vertical lines mask (search area), default: %(default)s')
+    parser.add_argument('--minwidthmask', type=float, default=0.075, choices=np.arange(0, 0.5), help='min widthdistance of all masks, default: %(default)s')
+    parser.add_argument('--maxgradientver', type=float, default=0.05, choices=np.arange(0, 1.0), help='max gradient of the vertical lines: %(default)s')
+    parser.add_argument('--minsizeblank', type=float, default=0.016, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
+    parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
@@ -71,15 +77,8 @@ def get_parser():
     #Change to "store_false" for release
     parser.add_argument('--splicemaintypestart', action="store_true",
                         help='The maintype of splicetyps will be placed on the end')
-    parser.add_argument('--threshwindow', type=float, default=31, help='Size of the window (binarization): %(default)s')
-    parser.add_argument('--threshweight', type=float, default=0.2, help='Weight the effect of the standard deviation (binarization): %(default)s')
-    parser.add_argument('-A', '--addstartheightab', type=int, default=20, help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
-    parser.add_argument('-a', '--addstopheightab', type=int, default=35, help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
-    parser.add_argument('-C', '--addstartheightc', type=int, default=0,
-                        help='Add some pixel for the clipping mask of segment c (startheight), default: %(default)s')
-    parser.add_argument('-c', '--addstopheightc', type=int, default=0,
-                        help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
-
+    parser.add_argument('--threshwindow', type=int, default=31, help='Size of the window (binarization): %(default)s')
+    parser.add_argument('--threshweight', type=float, default=0.2, choices=np.arange(0, 1.0), help='Weight the effect of the standard deviation (binarization): %(default)s')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
 
     args = parser.parse_args()
@@ -126,6 +125,7 @@ class Splice_Param():
 ####################### FUNCTIONS ##################################
 def crop(args, image, image_param, list_linecoords, clippingmask):
     filepath = image_param.pathout + image_param.name
+    pixelheight = set_pixelground(image_param.height)
     if args.showmasks == True:
         debugimage = color.gray2rgb(copy.deepcopy(image))
     for idx, linecoords in enumerate(list_linecoords):
@@ -142,31 +142,31 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
         if linecoords.segmenttype == 'B':
             if not args.quiet: print "blank"
             # Add sum extra space to the cords
-            roi = image[linecoords.height_start + 2 - args.addstartheightc:linecoords.height_stop - 2 +args.addstopheightc,
+            roi = image[linecoords.height_start + 2 - pixelheight(args.addstartheightc):linecoords.height_stop - 2 +pixelheight(args.addstopheightc),
                   linecoords.width_start:linecoords.width_stop]  # region of interest
             imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start + 2- args.addstartheightc, linecoords.height_stop - 2 +args.addstopheightc],
+                set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
                                               [linecoords.width_start, linecoords.width_stop]], 1, 220)
         if linecoords.segmenttype == 'P':
             if idx == 0:
-                print "plumb-first"
+                print "horizontal-first"
                 #linecoords.height_start = clippingmask.height_start + 17
-                if not args.quiet: print "plumb"
+                if not args.quiet: print "horizontal"
             roi = image[
-                  linecoords.height_start - args.addstartheightab:linecoords.height_stop + args.addstopheightab,
+                  linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
             imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheightab,
-                                               linecoords.height_stop + args.addstopheightab],
+                set_colored_mask(debugimage, [[linecoords.height_start - pixelheight(args.addstartheightab),
+                                               linecoords.height_stop + pixelheight(args.addstopheightab)],
                                               [clippingmask.width_start, linecoords.width_stop - 2]], 2, 180)
-            roi = image[linecoords.height_start - args.addstartheightab:linecoords.height_stop + args.addstopheightab,
+            roi = image[linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   linecoords.width_start + 1:clippingmask.width_stop]
             imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
-                set_colored_mask(debugimage, [[linecoords.height_start - args.addstartheightab,
-                                               linecoords.height_stop + args.addstopheightab],
+                set_colored_mask(debugimage, [[linecoords.height_start - pixelheight(args.addstartheightab),
+                                               linecoords.height_stop + pixelheight(args.addstopheightab)],
                                               [linecoords.width_start + 1, clippingmask.width_stop]], 0, 180)
 
         # Footer
@@ -243,9 +243,9 @@ def deskew(args,image, image_param, deskew_linesize):
         linecoords = Linecoords(image, i, b)
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
-        if int(args.minwidthpl * image_param.width) < get_width(b) < int(args.maxwidthpl * image_param.width) \
-                and int(image_param.height * args.minheightpl) < get_height(b) < int(image_param.height * args.maxheightpl) \
-                and int(image_param.height * args.minheightplmask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheightplmask) and linecoords.height_start != 0:
+        if int(args.minwidthhor * image_param.width) < get_width(b) < int(args.maxwidthhor * image_param.width) \
+                and int(image_param.height * args.minheighthor) < get_height(b) < int(image_param.height * args.maxheighthor) \
+                and int(image_param.height * args.minheighthormask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheighthormask) and linecoords.height_start != 0:
 
             obj_height, ob_jwidth = binary[b].shape
             obj_width_prc = ob_jwidth / 100
@@ -294,6 +294,11 @@ def get_mindist(s,length):
     else:
         return d2-int(d2*0.2)
 
+def set_pixelground(image_length):
+    def get_pixel(prc):
+        return int(image_length*prc)
+    return get_pixel
+
 def get_width(s):
     return s[1].stop-s[1].start
 
@@ -305,26 +310,31 @@ def linecoords_analyse(args,image, image_param, clippingmask):
     objects = measurements.find_objects(labels)
     count_height = 0
     count_width = 0
+    pixelheight = set_pixelground(image_param.height)
+    pixelwidth = set_pixelground(image_param.width)
+
     list_linecoords = [] # Init list of linecoordinates the format is: [0]: width.start, width.stopt,
-    # [1]:height.start, height.stop, [2]: Type of line [B = blank, P = plumb]
+    # [1]:height.start, height.stop, [2]: Type of line [B = blank, P = horizontal]
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
 
         linecoords = Linecoords(labels, i, b)
-        if args.minwidthpl * image_param.width <  get_width(b) < args.maxwidthpl * image_param.width \
-                and image_param.height*args.minheightpl < get_height(b) < image_param.height*args.maxheightpl \
-                and int(image_param.height * args.minheightplmask) <  linecoords.height_stop < int(image_param.height * args.maxheightplmask) and count_width == 0 and linecoords.height_start != 0:
+        if pixelwidth(args.minwidthhor) <  get_width(b) < pixelwidth(args.maxwidthhor) \
+                and pixelheight(args.minheighthor) < get_height(b) < pixelheight(args.maxheighthor) \
+                and pixelheight(args.minheighthormask) <  linecoords.height_stop < pixelheight(args.maxheighthormask) \
+                and count_width == 0 \
+                and linecoords.height_start != 0:
             # Distance Calculation - defining the clippingmask
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 2 # Lowest Point of object + 2 Pixel
             if clippingmask.user == None:
                 clippingmask.width_start = linecoords.width_start - border
-                if clippingmask.width_start > int(image_param.width * 0.05):
-                    clippingmask.width_start = int(image_param.width * 0.05)
+                if clippingmask.width_start > pixelwidth(args.minwidthmask):
+                    clippingmask.width_start = pixelwidth(args.minwidthmask)
                 clippingmask.width_stop = linecoords.width_stop + border
-                if clippingmask.width_stop < int(image_param.width*0.95):
-                    clippingmask.width_stop = int(image_param.width*0.95)
+                if clippingmask.width_stop < pixelwidth(1.0-args.minwidthmask):
+                    clippingmask.width_stop = pixelwidth(1.0-args.minwidthmask)
                 clippingmask.height_start = copy.deepcopy(topline_width_stop)
                 clippingmask.height_stop = 0
 
@@ -335,13 +345,13 @@ def linecoords_analyse(args,image, image_param, clippingmask):
             # Get coordinats of the line
             labels[b][labels[b] == i + 1] = 0
             count_width += 1
-        if args.minheightver * image_param.height < get_height(b) < args.maxheightver * image_param.height \
-                and image_param.width*args.minwidthver < get_width(b) < image_param.width*args.maxwidthver \
-                and int(image_param.width*args.minwidthvermask) < (linecoords.width_start+linecoords.width_stop)/2 < int(image_param.width*args.maxwidthvermask) \
+        if pixelheight(args.minheightver) < get_height(b) < pixelheight(args.maxheightver) \
+                and pixelwidth(args.minwidthver) < get_width(b) < pixelwidth(args.maxwidthver) \
+                and pixelwidth(args.minwidthvermask) < (linecoords.width_start+linecoords.width_stop)/2 < pixelwidth(args.maxwidthvermask) \
                 and float(get_width(b))/float(get_height(b)) < args.maxgradientver:
-            linecoords.segmenttype = 'P' # Defaultvalue for segmenttype 'P' for plumb lines
+            linecoords.segmenttype = 'P' # Defaultvalue for segmenttype 'P' for horizontal lines
             if count_height == 0:
-                if b[0].start - topline_width_stop > image_param.height*(args.minsizeblank+args.minsizeblankobolustop):
+                if b[0].start - topline_width_stop > pixelheight(args.minsizeblank+args.minsizeblankobolustop):
                     blankline = Linecoords(labels,i,b)
                     blankline.segmenttype = 'B'
                     blankline.height_start = topline_width_stop
@@ -357,14 +367,14 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                 else:
                     # Should fix to short vertical lines, in the height to top if they appear before any B Part in the image
                     if topline_width_stop > 0:
-                        linecoords.height_start = topline_width_stop + args.addstartheightab
+                        linecoords.height_start = topline_width_stop + pixelheight(args.addstartheightab)
                     list_linecoords.append(copy.deepcopy(linecoords))
                     count_height += 1
                     if args.ramp != None:
                         whiteout_ramp(image, linecoords)
             elif list_linecoords[count_height - 1].height_stop < b[0].stop:
                 #Test argument to filter braces
-                if b[0].start - list_linecoords[count_height - 1].height_stop > image_param.height*args.minsizeblank:
+                if b[0].start - list_linecoords[count_height - 1].height_stop > pixelheight(args.minsizeblank):
                     blankline = Linecoords(labels,i,b)
                     blankline.segmenttype = 'B'
                     blankline.height_start = list_linecoords[count_height - 1].height_stop
@@ -409,10 +419,12 @@ def plot(image, binary, Output):
     return 0
 
 def set_colored_mask(image, borders, color, intensity):
+    # borders[0][.] = height, borders[1][.] = weight, borders[.][0]=start, borders[.][1]=stop
     image[borders[0][0]:borders[0][0]+5,borders[1][0]:borders[1][1]] = 0
     image[borders[0][1]-6:borders[0][1]-1, borders[1][0]:borders[1][1]] = 0
     image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][0]+5] = 0
     image[borders[0][0]:borders[0][1], borders[1][1]-6:borders[1][1]-1] = 0
+    # masks all values <= 55 to protect them against the color addition
     masked_image = np.ma.greater(image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color],55)
     image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] += intensity
     image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color] = image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] *masked_image
@@ -436,7 +448,7 @@ def splice(args,input):
                 segments = [misc.imread(img,mode='RGB') for img in list_splice]
                 img_height = sum(segment.shape[0] for segment in segments)
                 img_width = max(segment.shape[1] for segment in segments)
-                spliced_image = np.ones((img_height, img_width, 3), dtype=np.uint8)
+                spliced_image = np.ones((img_height, img_width, 3), dtype=np.uint8)*args.bgcolor
                 y = 0
                 for segment in segments:
                     h, w, d = segment.shape
@@ -452,7 +464,7 @@ def whiteout_ramp(image, linecoords):
     #for idx in range(linecoords.width_stop):
     imagesection = image[linecoords.object]
     count = 0
-    # Dilation enlarge the bright segements and cut them out off the original image
+    # Dilation enlarge the bright segments and cut them out off the original image
     for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
         whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
         imagesection[count,whitevalue.start:whitevalue.stop] = 255

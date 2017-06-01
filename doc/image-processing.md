@@ -58,11 +58,11 @@ standard deviation. R is the maximum standard deviation of a greyscale image.
 ## Linecoord Analyse
 ### The different linetypes to look for
 
-pl -> Horziontal line (plumb)  
+hor -> Horizontal line 
 ver -> Vertical line
 
     xxxver
-    xxxplmask
+    xxxhor
 
 (where `xxx` stands for the feature to set)
 
@@ -80,6 +80,18 @@ image width.
         
 ### Mask options (search area) for the different linetypes:
 
+####Horizontal:   
+minheighthormask + factor of the image height  
+maxheighthormask + factor of the image height
+
+0.0 -> 0% height -> top of the image  
+1.0 -> 100% height -> bottom of the image  
+
+    ./crass (...options...) --minheightplmask 0.0 --maxheightplmask 0.3 
+
+This will set the mask (search area) between 0% (top of the image) and 
+30% of the images height.
+        
 ####Vertical:
 minwidthver + factor of the image width  
 maxwidthver + factor of the image width  
@@ -91,18 +103,7 @@ maxwidthver + factor of the image width
 
 This will set the mask (search area) between 30% and 70% of the image.
 
-####Plumb:   
-minheightplmask + factor of the image height  
-maxheightplmask + factor of the image height
 
-0.0 -> 0% height -> top of the image  
-1.0 -> 100% height -> bottom of the image  
-
-    ./crass (...options...) --minheightplmask 0.0 --maxheightplmask 0.3 
-
-This will set the mask (search area) between 0% (top of the image) and 
-30% of the images height.
-        
 ## Setting Clipping Masks
 Clipping mask mark the area to be crop out. This area will be compute 
 automatically but the user can set some extra options.
@@ -128,9 +129,9 @@ This will expand the area 50 pixels to the bottom.
 There are 5 types of segments:
     
    - h = header
-   - a = left side separated by a horizontal line
-   - b = right side separated by a horizontal line
-   - c = space between header and horizontal line or horizontal line and another horizontal line
+   - a = left side separated by a vertical line
+   - b = right side separated by a vertical line
+   - c = space between header and vertical line or vertical line and another vertical line
    - f = footer
   
     ./crass (...options...) --splicetypes a,b,f
