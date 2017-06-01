@@ -27,7 +27,7 @@ import warnings
 
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
-    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on blacklines ")
+    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
 
     # Erease -- on input and extension
     #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0007.jpg",
@@ -39,14 +39,13 @@ def get_parser():
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
-
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
     parser.add_argument('-C', '--addstartheightc', type=float, default=-0.005, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (startheight), default: %(default)s')
     parser.add_argument('-c', '--addstopheightc', type=float, default=0.0, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
     parser.add_argument('--bgcolor', type=int, default=0, choices=np.arange(255),help='Backgroundcolor of the splice image (0=black,...255=white): %(default)s')
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
-    parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0, 0.5),
+    parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0.1, 1.0),
                         help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
     parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
     parser.add_argument('--maxwidthhor', type=float, default=0.95,choices=np.arange(-1.0, 1.0), help='maxwidth of the horizontal lines, default: %(default)s')
@@ -148,11 +147,11 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             if args.showmasks == True:
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
                                               [linecoords.width_start, linecoords.width_stop]], 1, 220)
-        if linecoords.segmenttype == 'P':
+        if linecoords.segmenttype == 'L':
             if idx == 0:
-                print "horizontal-first"
+                print "line-first"
                 #linecoords.height_start = clippingmask.height_start + 17
-                if not args.quiet: print "horizontal"
+                if not args.quiet: print "line"
             roi = image[
                   linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
@@ -238,22 +237,22 @@ def deskew(args,image, image_param, deskew_linesize):
     binary = 1-binary #inverse binary
     labels, numl = measurements.label(binary)
     objects = measurements.find_objects(labels)
-    deskew_path = "0"
+    deskew_path = None
     for i, b in enumerate(objects):
         linecoords = Linecoords(image, i, b)
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
         if int(args.minwidthhor * image_param.width) < get_width(b) < int(args.maxwidthhor * image_param.width) \
                 and int(image_param.height * args.minheighthor) < get_height(b) < int(image_param.height * args.maxheighthor) \
-                and int(image_param.height * args.minheighthormask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheighthormask) and linecoords.height_start != 0:
+                and int(image_param.height * args.minheighthormask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheighthormask) \
+                and linecoords.height_start != 0:
 
-            obj_height, ob_jwidth = binary[b].shape
-            obj_width_prc = ob_jwidth / 100
-            arr = np.arange(1, (obj_width_prc * (100 - deskew_linesize * 2)) + 1)
+            pixelwidth = set_pixelground(binary[b].shape[1])
+            arr = np.arange(1, pixelwidth(args.deskewlinesize) + 1)
             mean_y = []
             #Calculate the mean value for every y-array
-            for idx in range(obj_width_prc * (100 - deskew_linesize * 2)):
-                value_y = measurements.find_objects(labels[b][:, idx + (obj_width_prc * deskew_linesize)] == i + 1)[0]
+            for idx in range(pixelwidth(args.deskewlinesize)):
+                value_y = measurements.find_objects(labels[b][:, idx + pixelwidth((1.0-args.deskewlinesize)/2)] == i + 1)[0]
                 mean_y.append((value_y[0].stop + value_y[0].start) / 2)
             polyfit_value = np.polyfit(arr, mean_y, 1)
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
@@ -314,7 +313,7 @@ def linecoords_analyse(args,image, image_param, clippingmask):
     pixelwidth = set_pixelground(image_param.width)
 
     list_linecoords = [] # Init list of linecoordinates the format is: [0]: width.start, width.stopt,
-    # [1]:height.start, height.stop, [2]: Type of line [B = blank, P = horizontal]
+    # [1]:height.start, height.stop, [2]: Type of line [B = blank, L = vertical line]
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
         # only one obj allowed and the line isnt allowed to start contact the topborder of the image
@@ -349,7 +348,7 @@ def linecoords_analyse(args,image, image_param, clippingmask):
                 and pixelwidth(args.minwidthver) < get_width(b) < pixelwidth(args.maxwidthver) \
                 and pixelwidth(args.minwidthvermask) < (linecoords.width_start+linecoords.width_stop)/2 < pixelwidth(args.maxwidthvermask) \
                 and float(get_width(b))/float(get_height(b)) < args.maxgradientver:
-            linecoords.segmenttype = 'P' # Defaultvalue for segmenttype 'P' for horizontal lines
+            linecoords.segmenttype = 'L' # Defaultvalue for segmenttype 'P' for horizontal lines
             if count_height == 0:
                 if b[0].start - topline_width_stop > pixelheight(args.minsizeblank+args.minsizeblankobolustop):
                     blankline = Linecoords(labels,i,b)
