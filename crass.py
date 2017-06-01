@@ -4,7 +4,7 @@
 #Program:  **crass**
 #Info:     **Python 2.7**
 #Author:   **Jan Kamlah**
-#Date:     **22.05.2017**
+#Date:     **01.06.2017**
 
 ####################### IMPORT ##################################
 import argparse
@@ -29,15 +29,15 @@ import warnings
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
-
+    parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
     #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0007.jpg",
     #                   help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\TEST\\",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
                         help='Input file or folder')
-    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="png", help='Extension of the files, default: %(default)s')
+    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
@@ -48,7 +48,7 @@ def get_parser():
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
     parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0.1, 1.0),
                         help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
-    parser.add_argument('--minwidthmask', type=float, default=0.125, choices=np.arange(0, 0.5),
+    parser.add_argument('--minwidthmask', type=float, default=0.06, choices=np.arange(0, 0.5),
                         help='min widthdistance of all masks, default: %(default)s')
     parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
     parser.add_argument('--maxwidthhor', type=float, default=0.95,choices=np.arange(-1.0, 1.0), help='maxwidth of the horizontal lines, default: %(default)s')
@@ -68,6 +68,7 @@ def get_parser():
     parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
+    parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
     parser.add_argument('--splice', action="store_false", help='splice the cropped segments')
     parser.add_argument("--splicetypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
@@ -120,6 +121,7 @@ class Linecoords():
         self.height_stop = object[0].stop
         self.width_start = object[1].start
         self.width_stop = object[1].stop
+        self.middle = None
         self.object = object
         self.object_value = value
         self.object_matrix = copy.deepcopy(binary[object])
@@ -153,6 +155,13 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
         # Crop middle segments
         if linecoords.segmenttype == 'B':
             if not args.quiet: print "blank"
+            if args.adaptingmasksoff != True:
+                if linecoords.middle - clippingmask.width_start > clippingmask.width_stop - linecoords.middle:
+                    linecoords.width_start = linecoords.middle - (clippingmask.width_stop - linecoords.middle)
+                    linecoords.width_stop = linecoords.middle + (clippingmask.width_stop - linecoords.middle)
+                else:
+                    linecoords.width_start = linecoords.middle - (linecoords.middle - clippingmask.width_start)
+                    linecoords.width_stop = linecoords.middle + (linecoords.middle - clippingmask.width_start)
             # Add sum extra space to the cords
             roi = image[linecoords.height_start + 2 - pixelheight(args.addstartheightc):linecoords.height_stop - 2 +pixelheight(args.addstopheightc),
                   linecoords.width_start:linecoords.width_stop]  # region of interest
@@ -164,10 +173,16 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
                                               [linecoords.width_start, linecoords.width_stop]], 1, 220)
         if linecoords.segmenttype == 'L':
+            #Fixing column size
+            if args.adaptingmasksoff != True:
+                if linecoords.width_stop - clippingmask.width_start > clippingmask.width_stop - linecoords.width_start:
+                    clippingmask.width_start = linecoords.width_stop - (clippingmask.width_stop - linecoords.width_start)
+                else:
+                    clippingmask.width_stop = linecoords.width_start + linecoords.width_stop - clippingmask.width_start
             if idx == 0:
                 print "line-first"
                 #linecoords.height_start = clippingmask.height_start + 17
-                if not args.quiet: print "line"
+            if not args.quiet: print "line"
             roi = image[
                   linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
@@ -315,9 +330,9 @@ def get_mindist(s,length):
     d1 = s[1].start
     d2 = length - s[1].stop
     if d1 < d2:
-        return d1-int(d1*0.2)
+        return d1-int(d1*0.5)
     else:
-        return d2-int(d2*0.2)
+        return d2-int(d2*0.5)
 
 def set_pixelground(image_length):
     def get_pixel(prc):
@@ -367,12 +382,12 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 2 # Lowest Point of object + 2 Pixel
             if clippingmask.user == None:
-                clippingmask.width_start = linecoords.width_start - border
-                if clippingmask.width_start > pixelwidth(args.minwidthmask):
-                    clippingmask.width_start = pixelwidth(args.minwidthmask)
-                clippingmask.width_stop = linecoords.width_stop + border
-                if clippingmask.width_stop < pixelwidth(1.0-args.minwidthmask):
-                    clippingmask.width_stop = pixelwidth(1.0-args.minwidthmask)
+                clippingmask.width_start = border
+                clippingmask.width_stop = image_param.width - border
+                #if clippingmask.width_start > pixelwidth(args.minwidthmask):
+                #    clippingmask.width_start = pixelwidth(args.minwidthmask)
+                #if clippingmask.width_stop < pixelwidth(1.0-args.minwidthmask):
+                #    clippingmask.width_stop = pixelwidth(1.0-args.minwidthmask)
                 clippingmask.height_start = copy.deepcopy(topline_width_stop)
                 clippingmask.height_stop = 0
 
@@ -396,6 +411,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
                     blankline.height_stop = linecoords.height_start
                     blankline.width_start = border
                     blankline.width_stop = image_param.width - border
+                    blankline.middle = int(((linecoords.width_start+linecoords.width_stop)-1)/2)
                     list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
                     if args.ramp != None:
@@ -419,6 +435,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
                     blankline.height_stop = linecoords.height_start
                     blankline.width_start = border
                     blankline.width_stop = image_param.width - border
+                    blankline.middle = int(((linecoords.width_start+linecoords.width_stop)-1)/2)
                     list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
                     list_linecoords.append(copy.deepcopy(linecoords))
