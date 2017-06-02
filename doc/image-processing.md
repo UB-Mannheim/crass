@@ -23,7 +23,7 @@ order according to the following sequence:
 ## Disabling Processing Steps
 
 Each processing step can be disabled individually by a corresponding
-`--xxx` option (where `xxx` stands for the feature to disable).
+`--xxx` option (where `xxx` stands for the feature to disable). 
 
     ./crass (...options...) --deskew
 
@@ -106,7 +106,7 @@ This will set the mask (search area) between 30% and 70% of the image.
 
 ## Setting Clipping Masks
 Clipping mask mark the area to be crop out. This area will be compute 
-automatically but the user can set some extra options.
+automatically but the user can set some extra parameters.
 ### Add startheight
 *Addstartheight* expands the mask of either a&b or c to the top of the image.
 

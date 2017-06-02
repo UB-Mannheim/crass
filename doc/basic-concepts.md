@@ -28,7 +28,7 @@ The *image-file* format accepted by `crass` is *jpg*.
 ## Single Steps to Victory
 
 ### Deskew
-1.  Find the top or bottom vertical line.
+1.  Find the top or bottom horizontal line.
 2.  Compute the deskew angle.
 3.  Rotate to the correct angle.
 

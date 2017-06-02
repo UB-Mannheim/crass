@@ -4,7 +4,7 @@
 #Program:  **crass**
 #Info:     **Python 2.7**
 #Author:   **Jan Kamlah**
-#Date:     **01.06.2017**
+#Date:     **02.06.2017**
 
 ####################### IMPORT ##################################
 import argparse
@@ -30,7 +30,7 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg_horizontal_bottom_skew.jpg",
+    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg_skew.jpg",
                        help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
@@ -47,6 +47,10 @@ def get_parser():
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
     parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0.1, 1.0),
                         help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
+    parser.add_argument("--horlinepos", type=int, choices=[0, 1, 2, 3], default=0,
+                        help='Position of the horizontal line(0:top, 1:right,2:bottom,3:left), default: %(default)s')
+    parser.add_argument("--horlinetype", type=int, choices=[0, 1], default=0,
+                        help='Type of the horizontal line (0:header, 1:footer), default: %(default)s')
     parser.add_argument('--minwidthmask', type=float, default=0.06, choices=np.arange(0, 0.5),
                         help='min widthdistance of all masks, default: %(default)s')
     parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
@@ -81,12 +85,6 @@ def get_parser():
     parser.add_argument('--threshwindow', type=int, default=31, help='Size of the window (binarization): %(default)s')
     parser.add_argument('--threshweight', type=float, default=0.2, choices=np.arange(0, 1.0), help='Weight the effect of the standard deviation (binarization): %(default)s')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
-
-    # in progress
-    parser.add_argument("--horlinepos", type=int, choices=[0, 1, 2, 3], default=2,
-                        help='Position of the horizontal line(0:top, 1:right,2:bottom,3:left), default: %(default)s')
-    parser.add_argument("--horlinetype", type=int, choices=[0, 1], default=1,
-                        help='Type of the horizontal line (0:header, 1:footer), default: %(default)s')
 
     args = parser.parse_args()
     # Deactivate for normal use
