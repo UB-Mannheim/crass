@@ -20,8 +20,7 @@ import skimage as skimage
 import scipy.misc as misc
 import skimage.color as color
 import skimage.filters.thresholding as th
-from skimage.io import imread
-from skimage.io import imsave
+from skimage.io import imread, imsave
 import skimage.morphology as morph
 import skimage.transform as transform
 import warnings
@@ -31,12 +30,12 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0007.jpg",
-    #                   help='Input file or folder')
+    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg_horizontal_bottom_skew.jpg",
+                       help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
-                        help='Input file or folder')
+    #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
+    #                    help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
@@ -82,6 +81,12 @@ def get_parser():
     parser.add_argument('--threshwindow', type=int, default=31, help='Size of the window (binarization): %(default)s')
     parser.add_argument('--threshweight', type=float, default=0.2, choices=np.arange(0, 1.0), help='Weight the effect of the standard deviation (binarization): %(default)s')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
+
+    # in progress
+    parser.add_argument("--horlinepos", type=int, choices=[0, 1, 2, 3], default=2,
+                        help='Position of the horizontal line(0:top, 1:right,2:bottom,3:left), default: %(default)s')
+    parser.add_argument("--horlinetype", type=int, choices=[0, 1], default=1,
+                        help='Type of the horizontal line (0:header, 1:footer), default: %(default)s')
 
     args = parser.parse_args()
     # Deactivate for normal use
@@ -137,6 +142,7 @@ class Splice_Param():
 def crop(args, image, image_param, list_linecoords, clippingmask):
     filepath = image_param.pathout + image_param.name
     pixelheight = set_pixelground(image_param.height)
+    image = np.rot90(image, args.horlinepos)
     if args.showmasks == True:
         debugimage = color.gray2rgb(copy.deepcopy(image))
     for idx, linecoords in enumerate(list_linecoords):
@@ -144,13 +150,20 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
         if idx == 0:
             if not args.quiet: print "header"
             roi = image[0:linecoords.height_start - 2, 0:image_param.width]  # region of interest
+            roi = np.rot90(roi, 4-args.horlinepos)
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
+                if args.horlinetype == 1:
+                    imsave("%s_%d_f.%s" % (filepath, len(list_linecoords)+2, args.extension), roi)
+                else:
+                    imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
             if args.showmasks == True:
+                dim = 0
+                if args.horlinetype == 1:
+                    dim = 1
                 set_colored_mask(debugimage, [[0, linecoords.height_start - 2],
-                                              [0, image_param.width]], 0, 100)
+                                              [0, image_param.width]], dim, 100)
 
         # Crop middle segments
         if linecoords.segmenttype == 'B':
@@ -165,13 +178,17 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             # Add sum extra space to the cords
             roi = image[linecoords.height_start + 2 - pixelheight(args.addstartheightc):linecoords.height_stop - 2 +pixelheight(args.addstopheightc),
                   linecoords.width_start:linecoords.width_stop]  # region of interest
+            roi = np.rot90(roi, 4 - args.horlinepos)
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
+                if args.horlinetype == 1:
+                    idx = len(list_linecoords) - idx
                 imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
+                dim = 1
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
-                                              [linecoords.width_start, linecoords.width_stop]], 1, 220)
+                                              [linecoords.width_start, linecoords.width_stop]], dim, 220)
         if linecoords.segmenttype == 'L':
             #Fixing column size
             if args.adaptingmasksoff != True:
@@ -186,42 +203,65 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             roi = image[
                   linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
+            roi = np.rot90(roi, 4 - args.horlinepos)
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
+                if args.horlinetype == 1:
+                    idx = len(list_linecoords) - idx
+                    imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
+                else:
+                    imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
+                dim = 2
+                if args.horlinetype == 1:
+                    dim = 0
                 set_colored_mask(debugimage, [[linecoords.height_start - pixelheight(args.addstartheightab),
                                                linecoords.height_stop + pixelheight(args.addstopheightab)],
-                                              [clippingmask.width_start, linecoords.width_stop - 2]], 2, 180)
+                                              [clippingmask.width_start, linecoords.width_stop - 2]], dim, 180)
             roi = image[linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   linecoords.width_start + 1:clippingmask.width_stop]
+            roi = np.rot90(roi, 4 - args.horlinepos)
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
+                if args.horlinetype == 1:
+                    imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
+                else:
+                    imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
+                dim = 0
+                if args.horlinetype == 1:
+                    dim = 2
                 set_colored_mask(debugimage, [[linecoords.height_start - pixelheight(args.addstartheightab),
                                                linecoords.height_stop + pixelheight(args.addstopheightab)],
-                                              [linecoords.width_start + 1, clippingmask.width_stop]], 0, 180)
+                                              [linecoords.width_start + 1, clippingmask.width_stop]], dim, 180)
 
         # Footer
         if idx == len(list_linecoords) - 1:
             if not args.quiet: print "footer"
             roi = image[linecoords.height_stop + 2:image_param.height,
                   0:image_param.width]  # region of interest
+            roi = np.rot90(roi, 4 - args.horlinepos)
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
+                if args.horlinetype == 1:
+                    imsave("%s_%d_h.%s" % (filepath, 0, args.extension), roi)
+                else:
+                    imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
             if args.showmasks == True:
+                dim = 1
+                if args.horlinetype == 1:
+                    dim = 0
                 set_colored_mask(debugimage,
-                                 [[linecoords.height_stop + 2, image_param.height], [0, image_param.width]], 1,
+                                 [[linecoords.height_stop + 2, image_param.height], [0, image_param.width]], dim,
                                  100)
     if args.showmasks == True:
         with warnings.catch_warnings():
             # Transform rotate convert the img to float and save convert it back
             warnings.simplefilter("ignore")
+            debugimage = np.rot90(debugimage, 4 - args.horlinepos)
             imsave("%s_masks.%s" % (filepath, args.extension), debugimage)
     return 0
 
@@ -275,6 +315,7 @@ def deskew(args,image, image_param):
     thresh = th.threshold_sauvola(uintimage, args.threshwindow, args.threshweight)
     binary = uintimage > thresh
     binary = 1-binary #inverse binary
+    binary = np.rot90(binary,args.horlinepos)
     labels, numl = measurements.label(binary)
     objects = measurements.find_objects(labels)
     deskew_path = None
@@ -356,9 +397,11 @@ def get_width(s):
 
 def linecoords_analyse(args,origimg, image_param, clippingmask):
     image = get_uintimg(origimg)
+    origimg = np.rot90(origimg, args.horlinepos)
     thresh = th.threshold_sauvola(image, args.threshwindow, args.threshweight)
     binary = image > thresh
     binary = 1-binary #inverse binary
+    binary = np.rot90(binary, args.horlinepos)
     labels, numl = measurements.label(binary)
     objects = measurements.find_objects(labels)
     count_height = 0
@@ -415,7 +458,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
                     list_linecoords.append(copy.deepcopy(blankline))
                     count_height += 1
                     if args.ramp != None:
-                     whiteout_ramp(origimg, linecoords)
+                        whiteout_ramp(origimg, linecoords)
                     list_linecoords.append(copy.deepcopy(linecoords))
                     count_height += 1
                 else:
@@ -445,7 +488,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
                     labels[b][labels[b] == i + 1] = 0
                 else:
                     if args.ramp != None:
-                         whiteout_ramp(origimg, linecoords)
+                        whiteout_ramp(origimg, linecoords)
                     print b[0].stop
                     list_linecoords[count_height - 1].height_stop = b[0].stop
                     labels[b][labels[b] == i + 1] = 0
@@ -561,7 +604,8 @@ def crass():
     # Start crass with multiprocessing
     else:
         pool = multiprocessing.Pool(processes=args.parallel)
-        pool.map(cropping, inputfiles)
+        # chunksize = 1 every multiprocess gets exact the next free image (sorted order)
+        pool.map(cropping, inputfiles,chunksize=1)
     ####################### SPLICE #######################################
     if args.splice == True:
         if not args.splicemaintype in args.splicetypes:
