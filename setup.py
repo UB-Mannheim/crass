@@ -7,13 +7,9 @@ assert sys.version_info[0]==2 and sys.version_info[1]>=7,\
 from distutils.core import setup
 
 setup(
-    name='crasslib',
+    name='crass',
     version='0.8',
     author='jkamlah',
     description='crass - crop and splice segments',
-    packages=['crasslib'],
-    entry_points={
-        'console_scripts': [
-            'crass = crasslib.cmd:my_console_script:crass']
-    }
+    packages=[''],
 )
