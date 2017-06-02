@@ -29,7 +29,7 @@ import warnings
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
-    parser.add_argument("--config", action=LoadConfigAction, default=None)
+    #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
     #parser.add_argument("--input", type=str, default="C:\\Coding\\jpg\\hoppa-405844417-0050_0007.jpg",
     #                   help='Input file or folder')
@@ -487,7 +487,7 @@ def set_colored_mask(image, borders, color, intensity):
 
 def splice(args,input):
     os.chdir(input)
-    output = input+"\\spliced\\"
+    output = os.path.normpath(input)+"\\spliced\\"
     list_splice = []
     if not os.path.isdir(output):
         os.mkdir(output)
@@ -549,6 +549,7 @@ def whiteout_ramp(image, linecoords):
 ####################### MAIN-FUNCTIONS ############################################
 def crass():
     args = get_parser()
+    args.input = os.path.abspath(args.input)
     # Read inputfiles
     inputfiles = get_inputfiles(args)
     ####################### CRASS #######################################

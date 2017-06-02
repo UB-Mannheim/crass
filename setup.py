@@ -11,5 +11,5 @@ setup(
     version='0.8',
     packages=[''],
     author='jkamlah',
-    description='crass - crop and splice segments'
+    description='crass - crop and splice segments',
 )
