@@ -41,7 +41,8 @@ Running
 Here is an example for a page:
 
     # perform deskewing, crop and splice of a page
-    ./crass tests/testimg.jpg
+    # start out of the code dir
+    python ./crass.py --input ./test/testimg.jpg --extension jpg 
 
 This will create a directory "out/..." containing all cropped
 segments and debug outputs. And a subdirectory "spliced/.."
