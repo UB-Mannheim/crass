@@ -69,7 +69,6 @@ def get_parser():
     parser.add_argument('--minsizeblank', type=float, default=0.016, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
-    parser.add_argument('--plot',  action="store_false", help='plotting some steps in the end')
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -107,7 +106,7 @@ class Clippingmask():
             self.height_stop, self.width_stop = image.shape
         self.user = None
 
-class Image_Param():
+class ImageParam():
     def __init__(self, image, input):
         if len(image.shape) > 2:
             self.height, self.width, self.rgb = image.shape
@@ -130,7 +129,7 @@ class Linecoords():
         self.object_matrix = copy.deepcopy(binary[object])
         self.segmenttype = None
 
-class Splice_Param():
+class SpliceParam():
     def __init__(self, input, parts):
         self.name = os.path.splitext(input)[0]
         self.segment = parts[len(parts)-2]
@@ -274,7 +273,7 @@ def cropping(input):
         logging.warning("cannot open %s" % input)
         return 1
 
-    image_param = Image_Param(image, input)
+    image_param = ImageParam(image, input)
     # create outputdir
     if not os.path.isdir(image_param.pathout):
         try:
@@ -294,7 +293,7 @@ def cropping(input):
             print("cannot open %s" % input)
             logging.warning("cannot open %s" % input)
             return 1
-        image_param = Image_Param(image, input)
+        image_param = ImageParam(image, input)
 
     ####################### ANALYSE - LINECOORDS #######################
         if not args.quiet: print "start linecoord-analyse"
@@ -488,28 +487,6 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
     return list_linecoords, border, topline_width_stop
 
-def plot(image, binary, Output):
-    #Obsolete
-    if not args.quiet: print "start plot"
-
-    fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
-    ax = axes.ravel()
-
-    ax[0].imshow(image, cmap=plt.cm.gray)
-    ax[0].set_title('Original image')
-
-    ax[1].imshow(binary, cmap=plt.cm.gray)
-    ax[1].set_title('Sauvola')
-
-    ax[2].imshow(Output, cmap=plt.cm.gray)
-    ax[2].set_title('Finding Blackfoot')
-
-    for a in ax:
-        a.axis('off')
-
-    plt.show()
-    return 0
-
 def set_colored_mask(image, borders, color, intensity):
     # borders[0][.] = height, borders[1][.] = weight, borders[.][0]=start, borders[.][1]=stop
     image[borders[0][0]:borders[0][0]+5,borders[1][0]:borders[1][1]] = 0
@@ -535,7 +512,7 @@ def splice(args,input):
         os.mkdir(output)
     for image in sorted(glob.glob("*.%s" % (args.extension))):
         if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in args.splicetypes:
-            splice_param = Splice_Param(input, os.path.splitext(image)[0].split("_"))
+            splice_param = SpliceParam(input, os.path.splitext(image)[0].split("_"))
             if splice_param.segmenttype != args.splicemaintype:
                 list_splice.append(image)
             else:
@@ -613,11 +590,6 @@ def crass():
         else:
             if not args.quiet: print "start splice"
             splice(args, os.path.dirname(args.input) + "//out//")
-
-    ####################### TEST-PLOT ##################################
-    #Obsolete
-    if args.plot == None:
-        plot(image, binary, Output)
 
 ####################### MAIN ############################################
 if __name__=="__main__":
