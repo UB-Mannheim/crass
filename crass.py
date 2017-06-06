@@ -528,7 +528,7 @@ def set_pixelground(image_length):
     return get_pixel
 
 def splice(args,input):
-    os.chdir(input)
+    #os.chdir(input)
     output = os.path.normpath(input)+"\\spliced\\"
     list_splice = []
     if not os.path.isdir(output):
