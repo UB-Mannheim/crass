@@ -1,6 +1,6 @@
 ![crass logo](doc/img/crass_logo.png)
-# crop and splice segments
-=======
+crop and splice segments
+========================
 
 Originally written by Jan Kamlah.
 
