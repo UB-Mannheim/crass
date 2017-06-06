@@ -1,6 +1,7 @@
 ![crass logo](doc/img/crass_logo.png)
 crop and splice segments
 ========================
+[![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/jkamlah/UB-Mannheim/crass)
 ![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)
 
 Originally written by Jan Kamlah.
