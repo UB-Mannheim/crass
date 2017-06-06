@@ -296,7 +296,7 @@ def cropping(input):
             return 1
         image_param = Image_Param(image, input)
 
-        ####################### ANALYSE - LINECOORDS #######################
+    ####################### ANALYSE - LINECOORDS #######################
         if not args.quiet: print "start linecoord-analyse"
     clippingmask = Clippingmask(image)
     list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
@@ -372,11 +372,6 @@ def get_mindist(s,length):
         return d1-int(d1*0.5)
     else:
         return d2-int(d2*0.5)
-
-def set_pixelground(image_length):
-    def get_pixel(prc):
-        return int(image_length*prc)
-    return get_pixel
 
 def get_uintimg(image):
     if len(image.shape) > 2:
@@ -494,6 +489,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
     return list_linecoords, border, topline_width_stop
 
 def plot(image, binary, Output):
+    #Obsolete
     if not args.quiet: print "start plot"
 
     fig, axes = plt.subplots(1, 3, figsize=(150, 50), sharex='all', sharey='all')
@@ -525,6 +521,11 @@ def set_colored_mask(image, borders, color, intensity):
     image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] += intensity
     image[borders[0][0]:borders[0][1], borders[1][0]:borders[1][1], color] = image[borders[0][0]:borders[0][1],borders[1][0]:borders[1][1],color] *masked_image
     return 0
+
+def set_pixelground(image_length):
+    def get_pixel(prc):
+        return int(image_length*prc)
+    return get_pixel
 
 def splice(args,input):
     os.chdir(input)
@@ -614,6 +615,7 @@ def crass():
             splice(args, os.path.dirname(args.input) + "//out//")
 
     ####################### TEST-PLOT ##################################
+    #Obsolete
     if args.plot == None:
         plot(image, binary, Output)
 
