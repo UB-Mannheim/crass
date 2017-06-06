@@ -80,7 +80,7 @@ image width.
         
 ### Mask options (search area) for the different linetypes:
 
-####Horizontal:   
+#### Horizontal:   
 minheighthormask + factor of the image height  
 maxheighthormask + factor of the image height
 
@@ -92,7 +92,7 @@ maxheighthormask + factor of the image height
 This will set the mask (search area) between 0% (top of the image) and 
 30% of the images height.
         
-####Vertical:
+#### Vertical:
 minwidthver + factor of the image width  
 maxwidthver + factor of the image width  
 
