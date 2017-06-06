@@ -11,7 +11,6 @@ import argparse
 import copy
 import glob
 import logging
-import matplotlib.pyplot as plt
 import multiprocessing
 import numpy as np
 import os
@@ -30,7 +29,7 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg_skew.jpg",
+    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg.jpg",
                        help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
