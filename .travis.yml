@@ -42,4 +42,4 @@ install:
   - python setup.py install
 
 #script:
-#- python ./crass.py --input ./test/testimg.jpg --extension jpg
+- python ./crass.py --input ./test/testimg.jpg --extension jpg
