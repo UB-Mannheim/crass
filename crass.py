@@ -320,7 +320,7 @@ def deskew(args,image, image_param):
     for i, b in enumerate(objects):
         linecoords = Linecoords(image, i, b)
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
-        # only one obj allowed and the line isnt allowed to start contact the topborder of the image
+        # only one obj allowed and the line isn't allowed to start contact the topborder of the image
         if int(args.minwidthhor * image_param.width) < get_width(b) < int(args.maxwidthhor * image_param.width) \
                 and int(image_param.height * args.minheighthor) < get_height(b) < int(image_param.height * args.maxheighthor) \
                 and int(image_param.height * args.minheighthormask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheighthormask) \
@@ -406,7 +406,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
     # [1]:height.start, height.stop, [2]: Type of line [B = blank, L = vertical line]
     for i, b in enumerate(objects):
         # The line has to be bigger than minwidth, smaller than maxwidth, stay in the top (30%) of the img,
-        # only one obj allowed and the line isnt allowed to start contact the topborder of the image
+        # only one obj allowed and the line isn't allowed to start contact the topborder of the image
 
         linecoords = Linecoords(labels, i, b)
         if pixelwidth(args.minwidthhor) <  get_width(b) < pixelwidth(args.maxwidthhor) \
