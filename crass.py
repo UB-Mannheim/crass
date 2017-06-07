@@ -557,9 +557,11 @@ def whiteout_ramp(image, linecoords):
     count = 0
     # Dilation enlarge the bright segments and cut them out off the original image
     for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
-        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
-        imagesection[count,whitevalue.start:whitevalue.stop] = 255
-        count +=1
+        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)
+        if whitevalue:
+            whitevalue = whitevalue[0][0]
+            imagesection[count,whitevalue.start:whitevalue.stop] = 255
+            count +=1
     #imsave("%s\\whitelines\\%s.%s" %(image_param.path,linecoords.object_value,args.extension), imagesection)
     return 0
 
