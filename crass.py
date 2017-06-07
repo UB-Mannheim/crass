@@ -26,7 +26,7 @@ import warnings
 
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
-    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
+    parser = argparse.ArgumentParser(description="Crop And Splice Segments (CRASS) of an image based on black (separator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
     parser.add_argument("input", type=str,help='Input file or folder')
