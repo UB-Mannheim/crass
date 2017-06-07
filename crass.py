@@ -29,12 +29,12 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("input", type=str,help='Input file or folder')
-    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
-    #                    help='Input file or folder')
+    #parser.add_argument("input", type=str,help='Input file or folder')
+    parser.add_argument("--input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
+                        help='Input file or folder')
     #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
     #                    help='Input file or folder')
-    parser.add_argument("extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
+    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
@@ -49,6 +49,7 @@ def get_parser():
                         help='Position of the horizontal line(0:top, 1:right,2:bottom,3:left), default: %(default)s')
     parser.add_argument("--horlinetype", type=int, choices=[0, 1], default=0,
                         help='Type of the horizontal line (0:header, 1:footer), default: %(default)s')
+    parser.add_argument("--imgmask", type=float, nargs=4, default=[0.0,1.0,0.0,1.0], help='Set a mask that only a specific part of the image will be computed, arguments =  Heightstart, Heightend, Widthstart, Widthend')
     parser.add_argument('--minwidthmask', type=float, default=0.06, choices=np.arange(0, 0.5),
                         help='min widthdistance of all masks, default: %(default)s')
     parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
@@ -263,12 +264,15 @@ def cropping(input):
     args = get_parser()
     try:
         image = imread("%s" % input)
+        image_param = ImageParam(image, input)
+        if args.imgmask != [0.0, 1.0, 0.0, 1.0]:
+            image = image[int(args.imgmask[0]*image_param.height):int(args.imgmask[1]*image_param.height),
+                    int(args.imgmask[2]*image_param.width):int(args.imgmask[3]*image_param.width)]
+            image_param = ImageParam(image, input)
     except IOError:
         print("cannot open %s" % input)
         logging.warning("cannot open %s" % input)
         return 1
-
-    image_param = ImageParam(image, input)
     # create outputdir
     if not os.path.isdir(image_param.pathout):
         try:
@@ -284,12 +288,11 @@ def cropping(input):
         # image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
         try:
             image = imread("%s" % (image_param.deskewpath))
+            image_param = ImageParam(image, input)
         except IOError:
             print("cannot open %s" % input)
             logging.warning("cannot open %s" % input)
             return 1
-        image_param = ImageParam(image, input)
-
     ####################### ANALYSE - LINECOORDS #######################
         if not args.quiet: print "start linecoord-analyse"
     clippingmask = Clippingmask(image)
