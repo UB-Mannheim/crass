@@ -45,7 +45,7 @@ Here is an example for a page:
     # perform deskewing, crop and splice of a page
     # start the program in the code directory (xxx/crass)
     $ cd xxx/crass
-    $ python ./crass.py ./test/testimg.jpg jpg 
+    $ python ./crass.py "./test/testimg.jpg" "jpg" 
     
     # perform deskewing, crop and splice of a page 
     # the horziontal line is in the bottom area and is bound to the footer
