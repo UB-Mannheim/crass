@@ -45,13 +45,13 @@ Here is an example for a page:
     # perform deskewing, crop and splice of a page
     # start the program in the code directory (xxx/crass)
     $ cd xxx/crass
-    $ python ./crass.py --input ./test/testimg.jpg --extension jpg 
+    $ python ./crass.py ./test/testimg.jpg jpg 
     
     # perform deskewing, crop and splice of a page 
     # the horziontal line is in the bottom area and is bound to the footer
     # start the program in the code directory (xxx/crass)
     $ cd xxx/crass
-    $ python ./crass.py --input ./test/testimg_bottom_skew.jpg --extension jpg --horlinepos 2 --horlinetype 1
+    $ python ./crass.py ./test/testimg_bottom_skew.jpg jpg --horlinepos 2 --horlinetype 1
 
 This will create a directory "out/..." containing all cropped
 segments and debug outputs. And a subdirectory "spliced/.."
