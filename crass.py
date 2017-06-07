@@ -29,13 +29,12 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("--input", type=str, default="C:\\Coding\\crass\\test\\testimg.jpg",
-                       help='Input file or folder')
+    parser.add_argument("input", type=str, help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
     #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
     #                    help='Input file or folder')
-    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
+    parser.add_argument("extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
@@ -85,9 +84,6 @@ def get_parser():
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
 
     args = parser.parse_args()
-    # Deactivate for normal use
-    args.showmasks = True
-    args.splicemaintypestop = True
     return args
 
 ####################### LOGGER-FILE-SETTINGS ########################
