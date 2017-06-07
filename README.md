@@ -51,7 +51,7 @@ Here is an example for a page:
     # the horziontal line is in the bottom area and is bound to the footer
     # start the program in the code directory (xxx/crass)
     $ cd xxx/crass
-    $ python ./crass.py ./test/testimg_bottom_skew.jpg jpg --horlinepos 2 --horlinetype 1
+    $ python ./crass.py "./test/testimg_bottom_skew.jpg" "jpg" --horlinepos 2 --horlinetype 1
 
 This will create a directory "out/..." containing all cropped
 segments and debug outputs. And a subdirectory "spliced/.."
