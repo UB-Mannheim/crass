@@ -19,7 +19,7 @@ import skimage as skimage
 import scipy.misc as misc
 import skimage.color as color
 import skimage.filters.thresholding as th
-from skimage.io import imread, imsave
+from skimage.io import imread, imsave, find_available_plugins
 import skimage.morphology as morph
 import skimage.transform as transform
 import warnings
@@ -42,6 +42,9 @@ def get_parser():
     parser.add_argument('-c', '--addstopheightc', type=float, default=0.0, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
     parser.add_argument('--bgcolor', type=int, default=0,help='Backgroundcolor of the splice image (for "uint8": 0=black,...255=white): %(default)s')
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
+    parser.add_argument("--croptypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
+                        default=['a', 'b', 'c', 'f', 'h'],
+                        help='Types to be cropped out, default: %(default)s')
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
     parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0.1, 1.0),
                         help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
@@ -147,9 +150,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'f' in args.croptypes:
                     imsave("%s_%d_f.%s" % (filepath, len(list_linecoords)+2, args.extension), roi)
-                else:
+                elif 'h' in args.croptypes:
                     imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
             if args.showmasks == True:
                 dim = 0
@@ -177,7 +180,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                 warnings.simplefilter("ignore")
                 if args.horlinetype == 1:
                     idx = len(list_linecoords) - idx
-                imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
+                if 'c' in args.croptypes:
+                    imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 1
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
@@ -200,10 +204,10 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'b' in args.croptypes:
                     idx = len(list_linecoords) - idx
                     imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
-                else:
+                elif 'a' in args.croptypes:
                     imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 2
@@ -218,9 +222,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'a' in args.croptypes:
                     imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
-                else:
+                elif 'a' in args.croptypes:
                     imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 0
@@ -239,9 +243,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'h' in args.croptypes:
                     imsave("%s_%d_h.%s" % (filepath, 0, args.extension), roi)
-                else:
+                elif 'h' in args.croptypes:
                     imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
             if args.showmasks == True:
                 dim = 1
