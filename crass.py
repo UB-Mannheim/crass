@@ -34,7 +34,7 @@ def get_parser():
     #                   help='Input file or folder')
     #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\hoppa-405844417-0050_0628.jpg",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1977\\jpg\\",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["jpg"], default="jpg", help='Extension of the files, default: %(default)s')
 
