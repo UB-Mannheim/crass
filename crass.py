@@ -4,7 +4,7 @@
 #Program:  **crass**
 #Info:     **Python 2.7**
 #Author:   **Jan Kamlah**
-#Date:     **02.06.2017**
+#Date:     **13.06.2017**
 
 ####################### IMPORT ##################################
 import argparse
@@ -29,12 +29,12 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segments (CRASS) of an image based on black (separator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("input", type=str,help='Input file or folder')
+    #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
-    #                    help='Input file or folder')
-    parser.add_argument("extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\tif\\hoppa-405844417-0050_0034.tif",
+                        help='Input file or folder')
+    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="tif", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
@@ -74,6 +74,7 @@ def get_parser():
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
+    parser.add_argument('--specialnomoff', action="store_false", help='Disable the special nomenclature for the AKF-Project!')
     parser.add_argument('--splice', action="store_false", help='splice the cropped segments')
     parser.add_argument("--splicetypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
                         default=['a', 'b', 'c'],
@@ -135,8 +136,19 @@ class SpliceParam():
         self.segmenttype = parts[len(parts)-1]
 
 ####################### FUNCTIONS ##################################
+def create_dir(newdir):
+    if not os.path.isdir(newdir):
+        try:
+            os.mkdir(newdir)
+        except IOError:
+            print("cannot create %s directoy" % newdir)
+
 def crop(args, image, image_param, list_linecoords, clippingmask):
-    filepath = image_param.pathout + image_param.name
+    create_dir(image_param.pathout+"\\segments\\")
+    filepath = image_param.pathout+"\\segments\\"+image_param.name
+    create_dir(image_param.pathout+"\\coords\\")
+    coordstxt = open(image_param.pathout+"\\coords\\"+image_param.name+"_coords.txt", "w")
+    coordstxt.write("Image resolution:\t%d\t%d\n" % (image_param.height, image_param.width))
     pixelheight = set_pixelground(image_param.height)
     image = np.rot90(image, args.horlinepos)
     if args.showmasks == True:
@@ -154,6 +166,7 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                     imsave("%s_%d_f.%s" % (filepath, len(list_linecoords)+2, args.extension), roi)
                 elif 'h' in args.croptypes:
                     imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
+                    coordstxt.write("Header:  \t%d\t%d\t%d\t%d\n" % (0,linecoords.height_start - 2, 0,image_param.width))
             if args.showmasks == True:
                 dim = 0
                 if args.horlinetype == 1:
@@ -182,6 +195,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                     idx = len(list_linecoords) - idx
                 if 'c' in args.croptypes:
                     imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
+                    coordstxt.write(
+                        "Blank:  \t%d\t%d\t%d\t%d\n" % (linecoords.height_start + 2 - pixelheight(args.addstartheightc),linecoords.height_stop - 2 +pixelheight(args.addstopheightc),
+                  linecoords.width_start,linecoords.width_stop))
             if args.showmasks == True:
                 dim = 1
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
@@ -209,6 +225,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                     imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
                 elif 'a' in args.croptypes:
                     imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
+                    coordstxt.write(
+                        "A-Split:\t%d\t%d\t%d\t%d\n" % (linecoords.height_start - pixelheight(args.addstartheightab),linecoords.height_stop + pixelheight(args.addstopheightab),
+                  clippingmask.width_start,linecoords.width_stop - 2))
             if args.showmasks == True:
                 dim = 2
                 if args.horlinetype == 1:
@@ -226,6 +245,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                     imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
                 elif 'a' in args.croptypes:
                     imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
+                    coordstxt.write(
+                        "B-Split:\t%d\t%d\t%d\t%d\n" % (linecoords.height_start - pixelheight(args.addstartheightab),linecoords.height_stop + pixelheight(args.addstopheightab),
+                                                        linecoords.width_start + 1,clippingmask.width_stop))
             if args.showmasks == True:
                 dim = 0
                 if args.horlinetype == 1:
@@ -247,6 +269,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                     imsave("%s_%d_h.%s" % (filepath, 0, args.extension), roi)
                 elif 'h' in args.croptypes:
                     imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
+                    coordstxt.write(
+                        "Footer:  \t%d\t%d\t%d\t%d\n" % (linecoords.height_stop + 2,image_param.height, 0,image_param.width))
             if args.showmasks == True:
                 dim = 1
                 if args.horlinetype == 1:
@@ -257,9 +281,12 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
     if args.showmasks == True:
         with warnings.catch_warnings():
             # Transform rotate convert the img to float and save convert it back
+            create_dir(image_param.pathout+"\\masks\\")
+            filename = (image_param.pathout+"\\masks\\"+"%s_masked.%s" % (image_param.name, args.extension))
             warnings.simplefilter("ignore")
             debugimage = np.rot90(debugimage, 4 - args.horlinepos)
-            imsave("%s_masks.%s" % (filepath, args.extension), debugimage)
+            imsave(filename, debugimage)
+    coordstxt.close()
     return 0
 
 def cropping(input):
@@ -277,13 +304,7 @@ def cropping(input):
         print("cannot open %s" % input)
         logging.warning("cannot open %s" % input)
         return 1
-    # create outputdir
-    if not os.path.isdir(image_param.pathout):
-        try:
-            os.mkdir(image_param.pathout)
-        except IOError:
-            print("cannot create out directoy")
-
+    create_dir(image_param.pathout)
     ####################### DESKEW ####################################
     # Deskew the loaded image
     if args.deskew == True:
@@ -338,7 +359,8 @@ def deskew(args,image, image_param):
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
             args.ramp = True
             deskew_image = transform.rotate(image, deskewangle)
-            deskew_path = "%s_deskew.%s" % (image_param.pathout+image_param.name, args.extension)
+            create_dir(image_param.pathout+"\\deskew\\")
+            deskew_path = "%s_deskew.%s" % (image_param.pathout+"\\deskew\\"+image_param.name, args.extension)
             image_param.deskewpath = deskew_path
             with warnings.catch_warnings():
                 #Transform rotate convert the img to float and save convert it back
@@ -506,21 +528,24 @@ def set_pixelground(image_length):
         return int(image_length*prc)
     return get_pixel
 
-def splice(args,input):
-    #os.chdir(input)
-    output = os.path.normpath(input)+"\\spliced\\"
+def splice(args,inputdir):
+    os.chdir(inputdir+"\\segments\\")
+    outputdir = inputdir + "\\splice\\"
+    spliceinfo = list()
+    create_dir(outputdir)
     list_splice = []
-    if not os.path.isdir(output):
-        os.mkdir(output)
+    entry_count = 1
     for image in sorted(glob.glob("*.%s" % (args.extension))):
         if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in args.splicetypes:
-            splice_param = SpliceParam(input, os.path.splitext(image)[0].split("_"))
+            splice_param = SpliceParam(inputdir, os.path.splitext(image)[0].split("_"))
             if splice_param.segmenttype != args.splicemaintype:
                 list_splice.append(image)
+                spliceinfo.append(image)
             else:
                 if not args.quiet: print "splice %s" % (image)
                 if args.splicemaintypestop:
                     list_splice.append(image)
+                    spliceinfo.append(image)
                 if len(list_splice) != 0:
                     segments = [misc.imread(img,mode='RGB') for img in list_splice]
                     img_height = sum(segment.shape[0] for segment in segments)
@@ -534,10 +559,24 @@ def splice(args,input):
                     with warnings.catch_warnings():
                         # Transform rotate convert the img to float and save convert it back
                         warnings.simplefilter("ignore")
-                        imsave("%s" % (output+"spliced"+image),spliced_image)
+                        if args.specialnomoff == True:
+                            firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0]+os.path.splitext(spliceinfo[0])[0].split("_")[1]
+                            imsave("%s" % (outputdir+('{0:0>4}'.format(entry_count))+"_"+firstitem+os.path.splitext(spliceinfo[0])[1]), spliced_image)
+                            spliceinfofile = open(outputdir+('{0:0>4}'.format(entry_count)) + "_" + firstitem + "_SegInfo" +".txt", "w")
+                            entry_count += 1
+                            spliceinfofile.writelines([x+"\n" for x in spliceinfo])
+                            spliceinfofile.close()
+                        else:
+                            imsave("%s" % (outputdir+os.path.splitext(spliceinfo[0])[0]+"_spliced"+os.path.splitext(spliceinfo[0])[1]), spliced_image)
+                            spliceinfofile = open(outputdir + os.path.splitext(spliceinfo[0])[0] + "_SegInfo" + ".txt",
+                                                  "w")
+                            spliceinfofile.writelines([x + "\n" for x in spliceinfo])
+                            spliceinfofile.close()
+                    spliceinfo = list()
                     list_splice = []
                 if not args.splicemaintypestop:
                     list_splice.append(image)
+                    spliceinfo.append(image)
     if len(list_splice) != 0:
         if not args.quiet: print "splice %s" % (image)
         segments = [misc.imread(img, mode='RGB') for img in list_splice]
@@ -552,7 +591,21 @@ def splice(args,input):
         with warnings.catch_warnings():
             # Transform rotate convert the img to float and save convert it back
             warnings.simplefilter("ignore")
-            imsave("%s" % (output + "spliced" + image), spliced_image)
+            if args.specialnomoff == True:
+                firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0] + \
+                            os.path.splitext(spliceinfo[0])[0].split("_")[1]
+                imsave("%s" % (
+                outputdir + ('{0:0>4}'.format(entry_count)) + "_" + firstitem + os.path.splitext(spliceinfo[0])[1]),
+                       spliced_image)
+                spliceinfofile = open(outputdir + ('{0:0>4}'.format(entry_count)) + "_" + firstitem + "_SegInfo" + ".txt",
+                                      "w")
+                spliceinfofile.writelines([x + "\n" for x in spliceinfo])
+                spliceinfofile.close()
+            else:
+                imsave("%s" % (outputdir +os.path.splitext(spliceinfo[0])[0]+"_spliced"+os.path.splitext(spliceinfo[0])[1]), spliced_image)
+                spliceinfofile = open( outputdir + os.path.splitext(spliceinfo[0])[0] + "_SegInfo" + ".txt","w")
+                spliceinfofile.writelines([x + "\n" for x in spliceinfo])
+                spliceinfofile.close()
     return 0
 
 def whiteout_ramp(image, linecoords):
@@ -574,7 +627,7 @@ def crass():
     args = get_parser()
     args.input = os.path.abspath(args.input)
     # Read inputfiles
-    inputfiles = get_inputfiles(args)
+    inputfiles = get_inputfiles(args)#
     ####################### CRASS #######################################
     ####################### CROP  #######################################
     # Start crass with serialprocessing
@@ -593,7 +646,10 @@ def crass():
                 logging.warning("Input error by user!")
         else:
             if not args.quiet: print "start splice"
-            splice(args, os.path.dirname(args.input) + "//out//")
+            path = args.input + "//out//"
+            if not os.path.isdir(args.input):
+                path = os.path.dirname(args.input) + "//out//"
+            splice(args, path)
 
 ####################### MAIN ############################################
 if __name__=="__main__":
