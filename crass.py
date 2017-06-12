@@ -19,18 +19,18 @@ import skimage as skimage
 import scipy.misc as misc
 import skimage.color as color
 import skimage.filters.thresholding as th
-from skimage.io import imread, imsave
+from skimage.io import imread, imsave, find_available_plugins
 import skimage.morphology as morph
 import skimage.transform as transform
 import warnings
 
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
-    parser = argparse.ArgumentParser(description="Crop And Splice Segements (CRASS) of an image based on black (seperator-)lines")
+    parser = argparse.ArgumentParser(description="Crop And Splice Segments (CRASS) of an image based on black (separator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
     parser.add_argument("input", type=str,help='Input file or folder')
-    #parser.add_argument("--input", type=str, default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\jpg\\hoppa-405844417-0060_0805.jpg",
+    #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
     #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1957\\jpg\\",
     #                    help='Input file or folder')
@@ -42,6 +42,9 @@ def get_parser():
     parser.add_argument('-c', '--addstopheightc', type=float, default=0.0, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
     parser.add_argument('--bgcolor', type=int, default=0,help='Backgroundcolor of the splice image (for "uint8": 0=black,...255=white): %(default)s')
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
+    parser.add_argument("--croptypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
+                        default=['a', 'b', 'c', 'f', 'h'],
+                        help='Types to be cropped out, default: %(default)s')
     parser.add_argument('--deskew', action="store_false", help='preprocessing: deskewing the paper')
     parser.add_argument('--deskewlinesize', type=float, default=0.8, choices=np.arange(0.1, 1.0),
                         help='Percantage of the horizontal line to compute the deskewangle: %(default)s')
@@ -49,6 +52,7 @@ def get_parser():
                         help='Position of the horizontal line(0:top, 1:right,2:bottom,3:left), default: %(default)s')
     parser.add_argument("--horlinetype", type=int, choices=[0, 1], default=0,
                         help='Type of the horizontal line (0:header, 1:footer), default: %(default)s')
+    parser.add_argument("--imgmask", type=float, nargs=4, default=[0.0,1.0,0.0,1.0], help='Set a mask that only a specific part of the image will be computed, arguments =  Heightstart, Heightend, Widthstart, Widthend')
     parser.add_argument('--minwidthmask', type=float, default=0.06, choices=np.arange(0, 0.5),
                         help='min widthdistance of all masks, default: %(default)s')
     parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
@@ -146,9 +150,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'f' in args.croptypes:
                     imsave("%s_%d_f.%s" % (filepath, len(list_linecoords)+2, args.extension), roi)
-                else:
+                elif 'h' in args.croptypes:
                     imsave("%s_%d_h.%s" % (filepath, idx, args.extension), roi)
             if args.showmasks == True:
                 dim = 0
@@ -176,7 +180,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                 warnings.simplefilter("ignore")
                 if args.horlinetype == 1:
                     idx = len(list_linecoords) - idx
-                imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
+                if 'c' in args.croptypes:
+                    imsave("%s_%d_c.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 1
                 set_colored_mask(debugimage, [[linecoords.height_start + 2- pixelheight(args.addstartheightc), linecoords.height_stop - 2 +pixelheight(args.addstopheightc)],
@@ -199,10 +204,10 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'b' in args.croptypes:
                     idx = len(list_linecoords) - idx
                     imsave("%s_%d_b.%s" % (filepath, idx, args.extension), roi)
-                else:
+                elif 'a' in args.croptypes:
                     imsave("%s_%d_a.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 2
@@ -217,9 +222,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'a' in args.croptypes:
                     imsave("%s_%d_a.%s" % (filepath, idx, args.extension), roi)
-                else:
+                elif 'a' in args.croptypes:
                     imsave("%s_%d_b.%s" % (filepath, idx+1, args.extension), roi)
             if args.showmasks == True:
                 dim = 0
@@ -238,9 +243,9 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
             with warnings.catch_warnings():
                 # Transform rotate convert the img to float and save convert it back
                 warnings.simplefilter("ignore")
-                if args.horlinetype == 1:
+                if args.horlinetype == 1 and 'h' in args.croptypes:
                     imsave("%s_%d_h.%s" % (filepath, 0, args.extension), roi)
-                else:
+                elif 'h' in args.croptypes:
                     imsave("%s_%d_f.%s" % (filepath, idx+2, args.extension), roi)
             if args.showmasks == True:
                 dim = 1
@@ -263,12 +268,15 @@ def cropping(input):
     args = get_parser()
     try:
         image = imread("%s" % input)
+        image_param = ImageParam(image, input)
+        if args.imgmask != [0.0, 1.0, 0.0, 1.0]:
+            image = image[int(args.imgmask[0]*image_param.height):int(args.imgmask[1]*image_param.height),
+                    int(args.imgmask[2]*image_param.width):int(args.imgmask[3]*image_param.width)]
+            image_param = ImageParam(image, input)
     except IOError:
         print("cannot open %s" % input)
         logging.warning("cannot open %s" % input)
         return 1
-
-    image_param = ImageParam(image, input)
     # create outputdir
     if not os.path.isdir(image_param.pathout):
         try:
@@ -284,12 +292,11 @@ def cropping(input):
         # image = misc.imread("%s" % (image_param.deskewpath),mode='RGB')
         try:
             image = imread("%s" % (image_param.deskewpath))
+            image_param = ImageParam(image, input)
         except IOError:
             print("cannot open %s" % input)
             logging.warning("cannot open %s" % input)
             return 1
-        image_param = ImageParam(image, input)
-
     ####################### ANALYSE - LINECOORDS #######################
         if not args.quiet: print "start linecoord-analyse"
     clippingmask = Clippingmask(image)
@@ -554,9 +561,11 @@ def whiteout_ramp(image, linecoords):
     count = 0
     # Dilation enlarge the bright segments and cut them out off the original image
     for i in morph.dilation(linecoords.object_matrix, morph.square(10)):
-        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)[0][0]
-        imagesection[count,whitevalue.start:whitevalue.stop] = 255
-        count +=1
+        whitevalue = measurements.find_objects(i == linecoords.object_value + 1)
+        if whitevalue:
+            whitevalue = whitevalue[0][0]
+            imagesection[count,whitevalue.start:whitevalue.stop] = 255
+            count +=1
     #imsave("%s\\whitelines\\%s.%s" %(image_param.path,linecoords.object_value,args.extension), imagesection)
     return 0
 

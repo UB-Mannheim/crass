@@ -10,9 +10,9 @@ Overview
 --------
 
 `crass` is a command line driven post-processing tool for scanned sheets of paper.
-The main purpose is to crop segements based on separator lines and splice them afterwards
-together in a certain order. In an additionally preprocessing step, `crass` might detect
-the rotation of the page and will rotating it to the correct
+The main purpose is to crop segments based on separator lines and splice them afterwards
+together in a certain order. In an additional preprocessing step, `crass` might detect
+the rotation of the page and will rotate it to the correct
 angle. This process is called "deskewing".
 
 Note that the automatic processing will sometimes fail. It is always a
