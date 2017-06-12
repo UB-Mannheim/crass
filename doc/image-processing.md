@@ -23,7 +23,7 @@ order according to the following sequence:
 ## Disabling Processing Steps
 
 Each processing step can be disabled individually by a corresponding
-`--xxx` option (where `xxx` stands for the feature to disable).
+`--xxx` option (where `xxx` stands for the feature to disable). 
 
     ./crass (...options...) --deskew
 
@@ -58,11 +58,11 @@ standard deviation. R is the maximum standard deviation of a greyscale image.
 ## Linecoord Analyse
 ### The different linetypes to look for
 
-pl -> Horziontal line (plumb)  
+hor -> Horizontal line 
 ver -> Vertical line
 
     xxxver
-    xxxplmask
+    xxxhor
 
 (where `xxx` stands for the feature to set)
 
@@ -80,7 +80,19 @@ image width.
         
 ### Mask options (search area) for the different linetypes:
 
-####Vertical:
+#### Horizontal:   
+minheighthormask + factor of the image height  
+maxheighthormask + factor of the image height
+
+0.0 -> 0% height -> top of the image  
+1.0 -> 100% height -> bottom of the image  
+
+    ./crass (...options...) --minheightplmask 0.0 --maxheightplmask 0.3 
+
+This will set the mask (search area) between 0% (top of the image) and 
+30% of the images height.
+        
+#### Vertical:
 minwidthver + factor of the image width  
 maxwidthver + factor of the image width  
 
@@ -91,21 +103,10 @@ maxwidthver + factor of the image width
 
 This will set the mask (search area) between 30% and 70% of the image.
 
-####Plumb:   
-minheightplmask + factor of the image height  
-maxheightplmask + factor of the image height
 
-0.0 -> 0% height -> top of the image  
-1.0 -> 100% height -> bottom of the image  
-
-    ./crass (...options...) --minheightplmask 0.0 --maxheightplmask 0.3 
-
-This will set the mask (search area) between 0% (top of the image) and 
-30% of the images height.
-        
 ## Setting Clipping Masks
 Clipping mask mark the area to be crop out. This area will be compute 
-automatically but the user can set some extra options.
+automatically but the user can set some extra parameters.
 ### Add startheight
 *Addstartheight* expands the mask of either a&b or c to the top of the image.
 
@@ -128,9 +129,9 @@ This will expand the area 50 pixels to the bottom.
 There are 5 types of segments:
     
    - h = header
-   - a = left side separated by a horizontal line
-   - b = right side separated by a horizontal line
-   - c = space between header and horizontal line or horizontal line and another horizontal line
+   - a = left side separated by a vertical line
+   - b = right side separated by a vertical line
+   - c = space between header and vertical line or vertical line and another vertical line
    - f = footer
   
     ./crass (...options...) --splicetypes a,b,f
@@ -141,17 +142,15 @@ process. (Default. a,b and c)
 ### Splicemaintype
 The splicemaintype starts or ends (depending on the *splicemaintypestart*-Option) the splicepattern.
 
-#### Splicemaintypestart
-The splicemaintypestart specifies if the splicemaintype starts or ends the splicepattern.
-(Default: Ends)
+#### Splicemaintypestop
+The splicemaintypestop set the maintype to the end of each segment not the start (default).
 
-    ./crass (...options...) --splicetypes a,b,f
-    ./crass (...options...) --splicemaintype f
+    ./crass (...options...) --splicetypes a,b,h
+    ./crass (...options...) --splicemaintype h
 
-Only the segments of the types a, b and f will be considered in the splicing
-process. The pattern will end with a f-segment. There can be several a and b segments
+Only the segments of the types a, b and h will be considered in the splicing
+process. The pattern will start with a h-segment. There can be several a and b segments
 in between.
-
 
 [1]: http://scikit-image.org/docs/dev/auto_examples/segmentation/plot_niblack_sauvola.html
 [2]: http://scikit-image.org/docs/dev/api/skimage.filters.html#skimage.filters.threshold_sauvola

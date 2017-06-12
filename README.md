@@ -1,6 +1,8 @@
 ![crass logo](doc/img/crass_logo.png)
-# crass
-=======
+crop and splice segments
+========================
+[![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/jkamlah/UB-Mannheim/crass)
+![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)
 
 Originally written by Jan Kamlah.
 
@@ -41,7 +43,15 @@ Running
 Here is an example for a page:
 
     # perform deskewing, crop and splice of a page
-    ./crass tests/testimg.jpg
+    # start the program in the code directory (xxx/crass)
+    $ cd xxx/crass
+    $ python ./crass.py "./test/testimg.jpg" "jpg" 
+    
+    # perform deskewing, crop and splice of a page 
+    # the horziontal line is in the bottom area and is bound to the footer
+    # start the program in the code directory (xxx/crass)
+    $ cd xxx/crass
+    $ python ./crass.py "./test/testimg_bottom_skew.jpg" "jpg" --horlinepos 2 --horlinetype 1
 
 This will create a directory "out/..." containing all cropped
 segments and debug outputs. And a subdirectory "spliced/.."
