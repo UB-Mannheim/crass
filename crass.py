@@ -114,7 +114,7 @@ class ImageParam():
         else:
             self.height, self.width = image.shape
         self.path = os.path.dirname(input)
-        self.pathout = os.path.dirname(input)+"\\out\\"
+        self.pathout = os.path.normpath(os.path.dirname(input)+"/out/")
         self.deskewpath = None
         self.name = os.path.splitext(os.path.basename(input))[0]
 
@@ -138,9 +138,11 @@ class SpliceParam():
 
 ####################### FUNCTIONS ##################################
 def create_dir(newdir):
+    print(newdir)
     if not os.path.isdir(newdir):
         try:
             os.mkdir(newdir)
+            print(newdir)
         except IOError:
             print("cannot create %s directoy" % newdir)
 
@@ -283,8 +285,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
     if args.showmasks == True:
         with warnings.catch_warnings():
             # Transform rotate convert the img to float and save convert it back
-            create_dir(image_param.pathout+os.path.normcase("//masks//"))
-            filename = (image_param.pathout+os.path.normcase("//masks//")+"%s_masked.%s" % (image_param.name, args.extension))
+            create_dir(image_param.pathout+os.path.normcase("/masks/"))
+            filename = (image_param.pathout+os.path.normcase("/masks/")+"%s_masked.%s" % (image_param.name, args.extension))
             warnings.simplefilter("ignore")
             debugimage = np.rot90(debugimage, 4 - args.horlinepos)
             imsave(filename, debugimage)
@@ -531,7 +533,7 @@ def splice(args,inputdir):
     #Search the segments pattern in the given directory and splice them together
     #Spliceinfo writes a txt file with all segments in the spliced image
     #prints(os.path.normpath(inputdir+os.path.normcase("\\segments\\")))
-    os.chdir(os.path.normpath(inputdir+os.path.normcase("/segments/")))
+    os.chdir(inputdir+os.path.normcase("/segments/"))
     outputdir = inputdir + os.path.normcase("/splice/")
     spliceinfo = list()
     create_dir(outputdir)
@@ -647,10 +649,10 @@ def crass():
                 logging.warning("Input error by user!")
         else:
             if not args.quiet: print "start splice"
-            path = args.input + "//out//"
+            path = args.input + os.path.normcase("/out/")
             if not os.path.isdir(args.input):
-                path = os.path.dirname(args.input) + "//out//"
-            splice(args, path)
+                path = os.path.dirname(args.input)+os.path.normcase("/out/")
+            splice(args, os.path.normpath(path))
 
 ####################### MAIN ############################################
 if __name__=="__main__":
