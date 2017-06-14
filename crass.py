@@ -29,12 +29,12 @@ def get_parser():
     parser = argparse.ArgumentParser(description="Crop And Splice Segments (CRASS) of an image based on black (separator-)lines")
     #parser.add_argument("--config", action=LoadConfigAction, default=None)
     # Erease -- on input and extension
-    parser.add_argument("input", type=str,help='Input file or folder')
+    #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    #parser.add_argument("input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\tif\\hoppa-405844417-0060_0582.tif",
-    #                    help='Input file or folder')
-    parser.add_argument("extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1963\\jpg\\",
+                        help='Input file or folder')
+    parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
     parser.add_argument('-A', '--addstartheightab', type=float, default=0.01, choices=np.arange(-1.0, 1.0), help='Add some pixel for the clipping mask of segments a&b (startheight), default: %(default)s')
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
@@ -68,10 +68,11 @@ def get_parser():
     parser.add_argument('--minwidthvermask', type=float, default=0.35, choices=np.arange(0, 1.0), help='minwidth of the vertical lines mask (search area), default: %(default)s')
     parser.add_argument('--maxwidthvermask', type=float, default=0.75, choices=np.arange(0, 1.0), help='maxwidth of the vertical lines mask (search area), default: %(default)s')
     parser.add_argument('--maxgradientver', type=float, default=0.05, choices=np.arange(0, 1.0), help='max gradient of the vertical lines: %(default)s')
-    parser.add_argument('--minsizeblank', type=float, default=0.016, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
+    # 0.016
+    parser.add_argument('--minsizeblank', type=float, default=0.01, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--nomnumber', type=int, default=4,help='Sets the quantity of numbers in the nomenclature (for "4": 000x_imagename): %(default)s')
-    parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
