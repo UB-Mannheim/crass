@@ -138,7 +138,6 @@ class SpliceParam():
 
 ####################### FUNCTIONS ##################################
 def create_dir(newdir):
-    print(newdir)
     if not os.path.isdir(newdir):
         try:
             os.mkdir(newdir)
