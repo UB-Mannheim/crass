@@ -32,7 +32,7 @@ def get_parser():
     parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    #parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\tif\\hoppa-405844417-0060_0582.tif",
+    #parser.add_argument("input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1967\\tif\\hoppa-405844417-0060_0582.tif",
     #                    help='Input file or folder')
     parser.add_argument("extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -529,7 +529,7 @@ def set_pixelground(image_length):
 def splice(args,inputdir):
     #Search the segments pattern in the given directory and splice them together
     #Spliceinfo writes a txt file with all segments in the spliced image
-    os.chdir(inputdir+"\\segments\\")
+    os.chdir(os.path.normpath(inputdir+"\\segments\\"))
     outputdir = inputdir + "\\splice\\"
     spliceinfo = list()
     create_dir(outputdir)
