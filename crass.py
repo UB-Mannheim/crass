@@ -530,7 +530,7 @@ def splice(args,inputdir):
     #Search the segments pattern in the given directory and splice them together
     #Spliceinfo writes a txt file with all segments in the spliced image
     #prints(os.path.normpath(inputdir+os.path.normcase("\\segments\\")))
-    os.chdir(os.path.normpath(inputdir+os.path.normcase("\\segments\\")))
+    os.chdir(os.path.normpath(inputdir+os.path.normcase("//segments//")))
     outputdir = inputdir + "\\splice\\"
     spliceinfo = list()
     create_dir(outputdir)
