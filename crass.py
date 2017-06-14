@@ -92,7 +92,7 @@ def get_parser():
     return args
 
 ####################### LOGGER-FILE-SETTINGS ########################
-logging.basicConfig(filename=os.path.dirname(get_parser().input) + '\\Logfile_crass.log', level=logging.DEBUG,
+logging.basicConfig(filename=os.path.dirname(get_parser().input) + os.path.normcase('//Logfile_crass.log'), level=logging.DEBUG,
                     format='%(asctime)s %(message)s',
                     datefmt='%m/%d/%Y %I:%M:%S %p')
 
@@ -146,10 +146,10 @@ def create_dir(newdir):
 def crop(args, image, image_param, list_linecoords, clippingmask):
     # Crops the segments based on the given linecoords
     # and export the linecoords into a txt file
-    create_dir(image_param.pathout+"\\segments\\")
-    filepath = image_param.pathout+"\\segments\\"+image_param.name
-    create_dir(image_param.pathout+"\\coords\\")
-    coordstxt = open(image_param.pathout+"\\coords\\"+image_param.name+"_coords.txt", "w")
+    create_dir(image_param.pathout+os.path.normcase("//segments//"))
+    filepath = image_param.pathout+os.path.normcase("//segments//")+image_param.name
+    create_dir(image_param.pathout+os.path.normcase("//coords//"))
+    coordstxt = open(image_param.pathout+os.path.normcase("//coords//")+image_param.name+"_coords.txt", "w")
     coordstxt.write("Image resolution:\t%d\t%d\n" % (image_param.height, image_param.width))
     pixelheight = set_pixelground(image_param.height)
     image = np.rot90(image, args.horlinepos)
@@ -282,8 +282,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
     if args.showmasks == True:
         with warnings.catch_warnings():
             # Transform rotate convert the img to float and save convert it back
-            create_dir(image_param.pathout+"\\masks\\")
-            filename = (image_param.pathout+"\\masks\\"+"%s_masked.%s" % (image_param.name, args.extension))
+            create_dir(image_param.pathout+os.path.normcase("//masks//"))
+            filename = (image_param.pathout+os.path.normcase("//masks//")+"%s_masked.%s" % (image_param.name, args.extension))
             warnings.simplefilter("ignore")
             debugimage = np.rot90(debugimage, 4 - args.horlinepos)
             imsave(filename, debugimage)
@@ -357,9 +357,9 @@ def deskew(args,image, image_param):
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
             args.ramp = True
             deskew_image = transform.rotate(image, deskewangle)
-            create_dir(image_param.pathout+"\\deskew\\")
-            deskew_path = "%s_deskew.%s" % (image_param.pathout+"\\deskew\\"+image_param.name, args.extension)
-            deskewinfo = open(image_param.pathout+"\\deskew\\"+image_param.name + "_deskewangle.txt", "w")
+            create_dir(image_param.pathout+os.path.normcase("//deskew//"))
+            deskew_path = "%s_deskew.%s" % (image_param.pathout+os.path.normcase("//deskew//")+image_param.name, args.extension)
+            deskewinfo = open(image_param.pathout+os.path.normcase("//deskew//")+image_param.name + "_deskewangle.txt", "w")
             deskewinfo.write("Deskewangle:\t%d" % deskewangle)
             deskewinfo.close()
             image_param.deskewpath = deskew_path
@@ -531,7 +531,7 @@ def splice(args,inputdir):
     #Spliceinfo writes a txt file with all segments in the spliced image
     #prints(os.path.normpath(inputdir+os.path.normcase("\\segments\\")))
     os.chdir(os.path.normpath(inputdir+os.path.normcase("//segments//")))
-    outputdir = inputdir + "\\splice\\"
+    outputdir = inputdir + os.path.normcase("//splice//")
     spliceinfo = list()
     create_dir(outputdir)
     list_splice = []
