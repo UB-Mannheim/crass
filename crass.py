@@ -70,6 +70,7 @@ def get_parser():
     parser.add_argument('--maxgradientver', type=float, default=0.05, choices=np.arange(0, 1.0), help='max gradient of the vertical lines: %(default)s')
     parser.add_argument('--minsizeblank', type=float, default=0.016, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
+    parser.add_argument('--nomnumber', type=int, default=4,help='Sets the quantity of numbers in the nomenclature (for "4": 000x_imagename): %(default)s')
     parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
@@ -146,10 +147,10 @@ def create_dir(newdir):
 def crop(args, image, image_param, list_linecoords, clippingmask):
     # Crops the segments based on the given linecoords
     # and export the linecoords into a txt file
-    create_dir(image_param.pathout+os.path.normcase("//segments//"))
-    filepath = image_param.pathout+os.path.normcase("//segments//")+image_param.name
-    create_dir(image_param.pathout+os.path.normcase("//coords//"))
-    coordstxt = open(image_param.pathout+os.path.normcase("//coords//")+image_param.name+"_coords.txt", "w")
+    create_dir(image_param.pathout+os.path.normcase("/segments/"))
+    filepath = image_param.pathout+os.path.normcase("/segments/")+image_param.name
+    create_dir(image_param.pathout+os.path.normcase("/coords/"))
+    coordstxt = open(image_param.pathout+os.path.normcase("/coords/")+image_param.name+"_coords.txt", "w")
     coordstxt.write("Image resolution:\t%d\t%d\n" % (image_param.height, image_param.width))
     pixelheight = set_pixelground(image_param.height)
     image = np.rot90(image, args.horlinepos)
@@ -357,9 +358,9 @@ def deskew(args,image, image_param):
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
             args.ramp = True
             deskew_image = transform.rotate(image, deskewangle)
-            create_dir(image_param.pathout+os.path.normcase("//deskew//"))
-            deskew_path = "%s_deskew.%s" % (image_param.pathout+os.path.normcase("//deskew//")+image_param.name, args.extension)
-            deskewinfo = open(image_param.pathout+os.path.normcase("//deskew//")+image_param.name + "_deskewangle.txt", "w")
+            create_dir(image_param.pathout+os.path.normcase("/deskew/"))
+            deskew_path = "%s_deskew.%s" % (image_param.pathout+os.path.normcase("/deskew/")+image_param.name, args.extension)
+            deskewinfo = open(image_param.pathout+os.path.normcase("/deskew/")+image_param.name + "_deskewangle.txt", "w")
             deskewinfo.write("Deskewangle:\t%d" % deskewangle)
             deskewinfo.close()
             image_param.deskewpath = deskew_path
@@ -384,7 +385,7 @@ def get_inputfiles(args):
         os.chdir(input)
         inputfiles = []
         for input in sorted(glob.glob("*.%s" % (args.extension))):
-            inputfiles.append(os.getcwd() + "\\" + input)
+            inputfiles.append(os.getcwd() + os.path.normcase("/") + input)
     else:
         inputfiles = []
         inputfiles.append(input)
@@ -530,13 +531,14 @@ def splice(args,inputdir):
     #Search the segments pattern in the given directory and splice them together
     #Spliceinfo writes a txt file with all segments in the spliced image
     #prints(os.path.normpath(inputdir+os.path.normcase("\\segments\\")))
-    os.chdir(os.path.normpath(inputdir+os.path.normcase("//segments//")))
-    outputdir = inputdir + os.path.normcase("//splice//")
+    os.chdir(os.path.normpath(inputdir+os.path.normcase("/segments/")))
+    outputdir = inputdir + os.path.normcase("/splice/")
     spliceinfo = list()
     create_dir(outputdir)
     list_splice = []
     entry_count = 1
     image = "Nothing!"
+    nomnumber = '{0:0>%d}' % args.nomnumber
     for image in sorted(glob.glob("*.%s" % args.extension)):
         if os.path.splitext(image)[0].split("_")[len(os.path.splitext(image)[0].split("_"))-1] in args.splicetypes:
             splice_param = SpliceParam(inputdir, os.path.splitext(image)[0].split("_"))
@@ -563,8 +565,8 @@ def splice(args,inputdir):
                         warnings.simplefilter("ignore")
                         if args.specialnomoff:
                             firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0]+os.path.splitext(spliceinfo[0])[0].split("_")[1]
-                            imsave("%s" % (outputdir+('{0:0>4}'.format(entry_count))+"_"+firstitem+os.path.splitext(spliceinfo[0])[1]), spliced_image)
-                            spliceinfofile = open(outputdir+('{0:0>4}'.format(entry_count)) + "_" + firstitem + "_SegInfo" +".txt", "w")
+                            imsave("%s" % (outputdir+(nomnumber.format(entry_count))+"_"+firstitem+os.path.splitext(spliceinfo[0])[1]), spliced_image)
+                            spliceinfofile = open(outputdir+(nomnumber.format(entry_count)) + "_" + firstitem + "_SegInfo" +".txt", "w")
                             entry_count += 1
                             spliceinfofile.writelines([x+"\n" for x in spliceinfo])
                             spliceinfofile.close()
@@ -596,9 +598,9 @@ def splice(args,inputdir):
             if args.specialnomoff:
                 firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0] + \
                             os.path.splitext(spliceinfo[0])[0].split("_")[1]
-                imsave("%s" % (outputdir + ('{0:0>4}'.format(entry_count)) + "_" + firstitem + os.path.splitext(spliceinfo[0])[1]),
+                imsave("%s" % (outputdir + (nomnumber.format(entry_count)) + "_" + firstitem + os.path.splitext(spliceinfo[0])[1]),
                        spliced_image)
-                spliceinfofile = open(outputdir + ('{0:0>4}'.format(entry_count)) + "_" + firstitem + "_SegInfo" + ".txt",
+                spliceinfofile = open(outputdir + (nomnumber.format(entry_count)) + "_" + firstitem + "_SegInfo" + ".txt",
                                       "w")
                 spliceinfofile.writelines([x + "\n" for x in spliceinfo])
                 spliceinfofile.close()
