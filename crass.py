@@ -627,7 +627,7 @@ def crass():
     args = get_parser()
     args.input = os.path.abspath(args.input)
     # Read inputfiles
-    inputfiles = get_inputfiles(args)#
+    inputfiles = get_inputfiles(args)
     ####################### CRASS #######################################
     ####################### CROP  #######################################
     # Start crass with serialprocessing
