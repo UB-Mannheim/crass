@@ -32,7 +32,7 @@ def get_parser():
     #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1964\\jpg\\",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1958\\jpg\\230-6_B_051_0030.jpg",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -69,10 +69,10 @@ def get_parser():
     parser.add_argument('--maxwidthvermask', type=float, default=0.75, choices=np.arange(0, 1.0), help='maxwidth of the vertical lines mask (search area), default: %(default)s')
     parser.add_argument('--maxgradientver', type=float, default=0.05, choices=np.arange(0, 1.0), help='max gradient of the vertical lines: %(default)s')
     # 0.016
-    parser.add_argument('--minsizeblank', type=float, default=0.015, c5oices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
+    parser.add_argument('--minsizeblank', type=float, default=0.015, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--nomnumber', type=int, default=4,help='Sets the quantity of numbers in the nomenclature (for "4": 000x_imagename): %(default)s')
-    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -88,6 +88,8 @@ def get_parser():
                         help='The maintype of splicetyps will be placed on the end')
     parser.add_argument('--threshwindow', type=int, default=31, help='Size of the window (binarization): %(default)s')
     parser.add_argument('--threshweight', type=float, default=0.2, choices=np.arange(0, 1.0), help='Weight the effect of the standard deviation (binarization): %(default)s')
+    parser.add_argument('--woblankstop', action="store_true",
+                        help='Deactivates the whiteout of the blank parts for the a & b parts, this will give lead to less memory usage.')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
 
     args = parser.parse_args()
@@ -146,7 +148,7 @@ def create_dir(newdir):
         except IOError:
             print("cannot create %s directoy" % newdir)
 
-def crop(args, image, image_param, list_linecoords, clippingmask):
+def crop(args, image, image_param, labels,list_linecoords, clippingmask):
     # Crops the segments based on the given linecoords
     # and export the linecoords into a txt file
     create_dir(image_param.pathout+os.path.normcase("/segments/"))
@@ -217,6 +219,8 @@ def crop(args, image, image_param, list_linecoords, clippingmask):
                 print "line-first"
                 #linecoords.height_start = clippingmask.height_start + 17
             if not args.quiet: print "line"
+            if args.woblankstop == False:
+                whiteout_blank(image, labels, linecoords.height_start- pixelheight(args.addstartheightab))
             roi = image[
                   linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
@@ -325,11 +329,11 @@ def cropping(input):
     ####################### ANALYSE - LINECOORDS #######################
         if not args.quiet: print "start linecoord-analyse"
     clippingmask = Clippingmask(image)
-    list_linecoords, border, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
+    border, labels, list_linecoords, topline_width_stop = linecoords_analyse(args, image, image_param, clippingmask)
     ####################### CROP #######################################
     if args.crop == True:
         if not args.quiet: print "start crop"
-        crop(args, image, image_param, list_linecoords, clippingmask)
+        crop(args, image, image_param, labels, list_linecoords, clippingmask)
     return 0
 
 def deskew(args,image, image_param):
@@ -509,7 +513,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
                     list_linecoords[count_height - 1].height_stop = b[0].stop
                     labels[b][labels[b] == i + 1] = 0
     #imsave("%s_EDIT%d.%s" % (image_param.pathout, linecoords.object_value, args.extension), image)
-    return list_linecoords, border, topline_width_stop
+    return border, labels, list_linecoords, topline_width_stop
 
 def set_colored_mask(image, borders, color, intensity):
     # Colorize the masked areas and create a black border
@@ -623,6 +627,19 @@ def whiteout_ramp(image, linecoords):
             whitevalue = whitevalue[0][0]
             imagesection[count,whitevalue.start:whitevalue.stop] = 255
             count +=1
+    return 0
+
+def whiteout_blank(image, labels, height):
+    # Dilation enlarge the bright segments and cut them out off the original image
+    objects = measurements.find_objects(labels)
+    for i, b in enumerate(objects):
+        if b != None:
+            print b
+            print height
+            if b[0].start <= height <= b[0].stop and b[1].start != 0 and b[0].stop != 0:
+                print "KILL IT"
+                linecoords = Linecoords(labels, i, b)
+                whiteout_ramp(image, linecoords)
     return 0
 
 ####################### MAIN-FUNCTIONS ############################################
