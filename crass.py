@@ -32,7 +32,7 @@ def get_parser():
     #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1958\\jpg\\230-6_B_051_0030.jpg",
+    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1965\\jpg\\230-6_B_058_0033.jpg",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -72,7 +72,7 @@ def get_parser():
     parser.add_argument('--minsizeblank', type=float, default=0.015, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--nomnumber', type=int, default=4,help='Sets the quantity of numbers in the nomenclature (for "4": 000x_imagename): %(default)s')
-    parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -570,8 +570,11 @@ def splice(args,inputdir):
                         # Transform rotate convert the img to float and save convert it back
                         warnings.simplefilter("ignore")
                         if args.specialnomoff:
-                            firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0]+os.path.splitext(spliceinfo[0])[0].split("_")[1]
-                            imsave("%s" % (outputdir+(nomnumber.format(entry_count))+"_"+firstitem+os.path.splitext(spliceinfo[0])[1]), spliced_image)
+                            firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[:-2]
+                            firstitem = "_".join(firstitem)
+                            #print(inputdir)
+                            year = os.path.splitext(os.path.normpath(inputdir))[0].split(os.sep)[-3:-2][0]
+                            imsave("%s" % (outputdir+(nomnumber.format(entry_count))+"_"+year+"_"+firstitem+os.path.splitext(spliceinfo[0])[1]), spliced_image)
                             spliceinfofile = open(outputdir+(nomnumber.format(entry_count)) + "_" + firstitem + "_SegInfo" +".txt", "w")
                             entry_count += 1
                             spliceinfofile.writelines([x+"\n" for x in spliceinfo])
@@ -602,9 +605,10 @@ def splice(args,inputdir):
             # Transform rotate convert the img to float and save convert it back
             warnings.simplefilter("ignore")
             if args.specialnomoff:
-                firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[0] + \
-                            os.path.splitext(spliceinfo[0])[0].split("_")[1]
-                imsave("%s" % (outputdir + (nomnumber.format(entry_count)) + "_" + firstitem + os.path.splitext(spliceinfo[0])[1]),
+                firstitem = os.path.splitext(spliceinfo[0])[0].split("_")[:-2]
+                firstitem = "_".join(firstitem)
+                year = os.path.splitext(os.path.normpath(inputdir))[0].split(os.sep)[-3:-2][0]
+                imsave("%s" % (outputdir + (nomnumber.format(entry_count)) + "_" +year+"_"+firstitem + os.path.splitext(spliceinfo[0])[1]),
                        spliced_image)
                 spliceinfofile = open(outputdir + (nomnumber.format(entry_count)) + "_" + firstitem + "_SegInfo" + ".txt",
                                       "w")
@@ -634,10 +638,7 @@ def whiteout_blank(image, labels, height):
     objects = measurements.find_objects(labels)
     for i, b in enumerate(objects):
         if b != None:
-            print b
-            print height
             if b[0].start <= height <= b[0].stop and b[1].start != 0 and b[0].stop != 0:
-                print "KILL IT"
                 linecoords = Linecoords(labels, i, b)
                 whiteout_ramp(image, linecoords)
     return 0
