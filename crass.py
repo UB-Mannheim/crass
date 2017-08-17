@@ -5,24 +5,25 @@
 #Info:     **Python 2.7**
 #Author:   **Jan Kamlah**
 #Date:     **13.06.2017**
-
 ####################### IMPORT ##################################
 import argparse
 import copy
 import glob
 import logging
 import multiprocessing
-import numpy as np
 import os
-from scipy.ndimage import measurements
-import skimage as ski
+import warnings
+
+import numpy as np
 import scipy.misc as misc
+import skimage as ski
 import skimage.color as color
 import skimage.filters.thresholding as th
-from skimage.io import imread, imsave
 import skimage.morphology as morph
 import skimage.transform as transform
-import warnings
+from scipy.ndimage import measurements
+from skimage.io import imread, imsave
+
 
 ####################### CMD-PARSER-SETTINGS ########################
 def get_parser():
@@ -32,7 +33,7 @@ def get_parser():
     #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="U:\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1965\\jpg\\230-6_B_058_0033.jpg",
+    parser.add_argument("--input", type=str,default="\\\\nas2\\vol09\\home\\jkamlah\\Eigene Dokumente\\Literatur\\Aufgaben\\crass\\1961\\jpg\\",
                         help='Input file or folder')
     parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
 
@@ -89,7 +90,7 @@ def get_parser():
     parser.add_argument('--threshwindow', type=int, default=31, help='Size of the window (binarization): %(default)s')
     parser.add_argument('--threshweight', type=float, default=0.2, choices=np.arange(0, 1.0), help='Weight the effect of the standard deviation (binarization): %(default)s')
     parser.add_argument('--woblankstop', action="store_true",
-                        help='Deactivates the whiteout of the blank parts for the a & b parts, this will give lead to less memory usage.')
+                        help='Deactivates the whiteout of the blank parts for the a & b parts, this will lead to less memory usage.')
     parser.add_argument('-q', '--quiet', action='store_true', help='be less verbose, default: %(default)s')
 
     args = parser.parse_args()
@@ -220,9 +221,8 @@ def crop(args, image, image_param, labels,list_linecoords, clippingmask):
                 #linecoords.height_start = clippingmask.height_start + 17
             if not args.quiet: print "line"
             if args.woblankstop == False:
-                whiteout_blank(image, labels, linecoords.height_start- pixelheight(args.addstartheightab))
-            roi = image[
-                  linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
+                whiteout_blank(image, labels, linecoords.height_start- pixelheight(args.addstartheightab),linecoords.height_stop + pixelheight(args.addstopheightab)-linecoords.height_start- pixelheight(args.addstartheightab))
+            roi = image[linecoords.height_start - pixelheight(args.addstartheightab):linecoords.height_stop + pixelheight(args.addstopheightab),
                   clippingmask.width_start:linecoords.width_stop - 2]  # region of interest
             roi = np.rot90(roi, 4 - args.horlinepos)
             with warnings.catch_warnings():
@@ -633,12 +633,14 @@ def whiteout_ramp(image, linecoords):
             count +=1
     return 0
 
-def whiteout_blank(image, labels, height):
+def whiteout_blank(image, labels, height, fullheight):
     # Dilation enlarge the bright segments and cut them out off the original image
     objects = measurements.find_objects(labels)
     for i, b in enumerate(objects):
         if b != None:
-            if b[0].start <= height <= b[0].stop and b[1].start != 0 and b[0].stop != 0:
+            #print(b[0])
+            #print(height)
+            if b[0].start <= height and fullheight*0.2 >= b[0].stop-b[0].start and b[0].stop != 0:
                 linecoords = Linecoords(labels, i, b)
                 whiteout_ramp(image, linecoords)
     return 0
