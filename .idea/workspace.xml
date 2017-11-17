@@ -1,0 +1,1481 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="39cd56a1-dc80-4188-b462-c490917e9739" name="Default" comment="Commit to pull">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/crass_utest.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/crass.iml" afterPath="$PROJECT_DIR$/.idea/crass.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crass.py" afterPath="$PROJECT_DIR$/crass.py" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="crass" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="crass.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/crass.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="274">
+              <caret line="35" column="121" lean-forward="false" selection-start-line="35" selection-start-column="121" selection-end-line="35" selection-end-column="121" />
+              <folding>
+                <element signature="e#333#348#0" expanded="true" />
+                <element signature="e#8963#9242#0" expanded="false" />
+                <element signature="e#9268#9669#0" expanded="false" />
+                <element signature="e#9695#10088#0" expanded="false" />
+                <element signature="e#10115#10287#0" expanded="false" />
+                <element signature="e#10384#10561#0" expanded="false" />
+                <element signature="e#10641#20375#0" expanded="false" />
+                <element signature="e#20402#22096#0" expanded="false" />
+                <element signature="e#22139#24646#0" expanded="false" />
+                <element signature="e#24681#24890#0" expanded="false" />
+                <element signature="e#24922#25253#0" expanded="false" />
+                <element signature="e#25334#25388#0" expanded="false" />
+                <element signature="e#25421#25631#0" expanded="false" />
+                <element signature="e#25661#26084#0" expanded="false" />
+                <element signature="e#26108#26135#0" expanded="false" />
+                <element signature="e#26206#31566#0" expanded="false" />
+                <element signature="e#31628#32419#0" expanded="false" />
+                <element signature="e#32460#32601#0" expanded="false" />
+                <element signature="e#32634#37909#0" expanded="false" />
+                <element signature="e#37953#38414#0" expanded="false" />
+                <element signature="e#38475#38926#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="crass_utest.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/crass_utest.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="184">
+              <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="299">
+              <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>vertical</find>
+      <find>maxgradientver</find>
+      <find>plumb</find>
+      <find>Image_Param</find>
+      <find>Splice_Param</find>
+      <find>type</find>
+      <find>skimage</find>
+      <find>args.ramp</find>
+      <find>whiteout_blank</find>
+      <find>whiteout_ramp</find>
+      <find>woblankstop</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>minwidthhor</replace>
+      <replace>maxgradientpl</replace>
+      <replace>minwidthver</replace>
+      <replace>vertical</replace>
+      <replace>horizontal</replace>
+      <replace>ImageParam</replace>
+      <replace>SpliceParam</replace>
+      <replace>ski</replace>
+    </replaceStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="JKamlah" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <push-targets>
+      <push-target-info target-remote="JKamlah" target-branch="master" repo="$PROJECT_DIR$" source="master" />
+    </push-targets>
+  </component>
+  <component name="GithubProjectSettings">
+    <option name="CREATE_PULL_REQUEST_DEFAULT_BRANCH" value="master" />
+    <option name="CREATE_PULL_REQUEST_DEFAULT_REPO_USER" value="UB-Mannheim" />
+    <option name="CREATE_PULL_REQUEST_DEFAULT_REPO_NAME" value="crass" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/doc/basic-concepts.md" />
+        <option value="$PROJECT_DIR$/doc/image-processing.md" />
+        <option value="$PROJECT_DIR$/argparse_config" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/setup.py" />
+        <option value="$USER_HOME$/Anaconda2local/Scripts/crass.py" />
+        <option value="$PROJECT_DIR$/.travis.yml" />
+        <option value="$PROJECT_DIR$/crass_utest.py" />
+        <option value="$PROJECT_DIR$/crass.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Buildout</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource ProjectPane="true" />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="crass" type="b2602c69:ProjectViewProjectNode" />
+              <item name="crass" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+      <pane id="Scratches" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Font" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="SearchEverywhereHistoryKey" value="split&#9;ACTION&#9;SplitHorizontally" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="crass" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="crass" />
+      </console-settings>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Coding\crass" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.crass">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="crass" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="crass" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="crass" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="crass" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;.&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method />
+    </configuration>
+    <configuration name="crass" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="crass" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/crass.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <recent_temporary>
+      <list size="1">
+        <item index="0" class="java.lang.String" itemvalue="Python.crass" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="39cd56a1-dc80-4188-b462-c490917e9739" name="Default" comment="" />
+      <created>1496150503009</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1496150503009</updated>
+    </task>
+    <task id="LOCAL-00001" summary="-a lot of changes:&#10; - fixing recognition of short plumb lines&#10; - fixing to short lines &#10; - fixing braces misrecognized as line">
+      <created>1496219690317</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1496219690317</updated>
+    </task>
+    <task id="LOCAL-00002" summary="-still a lot of changes:&#10; -- experimental version">
+      <created>1496238717833</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1496238717833</updated>
+    </task>
+    <task id="LOCAL-00003" summary="- fixed some typos&#10;- added parser argument &quot;choices&quot; to secure correct value input">
+      <created>1496309865836</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1496309865836</updated>
+    </task>
+    <task id="LOCAL-00004" summary="- fixed some typos&#10;- fixed some style issues">
+      <created>1496310975576</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1496310975576</updated>
+    </task>
+    <task id="LOCAL-00005" summary="- fixed import from rgb pictures&#10;- fixed dtype support">
+      <created>1496322420826</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1496322420826</updated>
+    </task>
+    <task id="LOCAL-00006" summary="- fixed doc">
+      <created>1496322460477</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1496322460477</updated>
+    </task>
+    <task id="LOCAL-00007" summary="- added adapting maskalgorithm&#10;- added config file for argparse">
+      <created>1496333657428</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1496333657428</updated>
+    </task>
+    <task id="LOCAL-00008" summary="- fixed README">
+      <created>1496735704722</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1496735704722</updated>
+    </task>
+    <task id="LOCAL-00009" summary="- fixed README">
+      <created>1496744024727</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1496744024727</updated>
+    </task>
+    <task id="LOCAL-00010" summary="- add travis.yml">
+      <created>1496751220219</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1496751220219</updated>
+    </task>
+    <task id="LOCAL-00011" summary="- expand travis.yml">
+      <created>1496751566149</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1496751566149</updated>
+    </task>
+    <task id="LOCAL-00012" summary="- expand travis.yml">
+      <created>1496751854886</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1496751854886</updated>
+    </task>
+    <task id="LOCAL-00013" summary="- fixed code (531)">
+      <created>1496752181557</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1496752181557</updated>
+    </task>
+    <task id="LOCAL-00014" summary="- fixed class naming with CamelCases">
+      <created>1496759768294</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1496759768294</updated>
+    </task>
+    <task id="LOCAL-00015" summary="- deleted plot-function">
+      <created>1496760773750</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1496760773750</updated>
+    </task>
+    <task id="LOCAL-00016" summary="- fixed start parameters">
+      <created>1496827176076</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1496827176076</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Merge branch 'master' of https://github.com/UB-Mannheim/crass&#10;&#10;# Conflicts:&#10;#&#9;crass.py">
+      <created>1496827354951</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1496827354951</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Merge branch 'master' of https://github.com/UB-Mannheim/crass&#10;&#10;# Conflicts:&#10;#&#9;crass.py">
+      <created>1496827383362</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1496827383362</updated>
+    </task>
+    <task id="LOCAL-00019" summary="- fixed start parameters">
+      <created>1496827835755</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1496827835755</updated>
+    </task>
+    <task id="LOCAL-00020" summary="README: fixed example">
+      <created>1496827901198</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1496827901198</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Added function: imgmask">
+      <created>1496843818208</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1496843818208</updated>
+    </task>
+    <task id="LOCAL-00022" summary="fixed function: whiteout-ramp">
+      <created>1496845267290</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1496845267290</updated>
+    </task>
+    <task id="LOCAL-00023" summary="try to fix travis">
+      <created>1496845559856</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1496845559856</updated>
+    </task>
+    <task id="LOCAL-00024" summary="try to fix travis">
+      <created>1496845951716</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1496845951716</updated>
+    </task>
+    <task id="LOCAL-00025" summary="-- added function: croptype()&#10;You can choose what segtype to be cropped out">
+      <created>1496851704234</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1496851704234</updated>
+    </task>
+    <task id="LOCAL-00026" summary="-- added infotext output: deskew, coords and splice">
+      <created>1497425884548</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1497425884548</updated>
+    </task>
+    <task id="LOCAL-00027" summary="-- Release version">
+      <created>1497426074755</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1497426074755</updated>
+    </task>
+    <task id="LOCAL-00028" summary="-- fixed normpath">
+      <created>1497426584869</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1497426584869</updated>
+    </task>
+    <task id="LOCAL-00029" summary="-- fixed normpath?">
+      <created>1497430208873</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1497430208873</updated>
+    </task>
+    <task id="LOCAL-00030" summary="-- fixed normpath?">
+      <created>1497430398697</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1497430398697</updated>
+    </task>
+    <task id="LOCAL-00031" summary="-- fixed normpcase for win">
+      <created>1497430681329</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1497430681329</updated>
+    </task>
+    <task id="LOCAL-00032" summary="-- changed all path to unix + normcase for win">
+      <created>1497431448345</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1497431448345</updated>
+    </task>
+    <task id="LOCAL-00033" summary="-- changed all path to unix-form and addes nomnumber (number of quantities of the imagenomenclature for spliced images: 000x..)">
+      <created>1497432457651</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1497432457651</updated>
+    </task>
+    <task id="LOCAL-00034" summary="-- changed all path to unix-form (hopefully!)">
+      <created>1497434016321</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1497434016321</updated>
+    </task>
+    <task id="LOCAL-00035" summary="-- forget to delete print">
+      <created>1497434295945</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1497434295945</updated>
+    </task>
+    <task id="LOCAL-00036" summary="-- working version">
+      <created>1497446041046</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1497446041046</updated>
+    </task>
+    <task id="LOCAL-00037" summary="-- working version">
+      <created>1497455719414</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1497455719414</updated>
+    </task>
+    <task id="LOCAL-00038" summary="-- add new function &quot;whiteout-blank&quot;">
+      <created>1497972776942</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1497972776942</updated>
+    </task>
+    <task id="LOCAL-00039" summary="-- commit before pull">
+      <created>1498807144626</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1498807144626</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Commit to pull">
+      <created>1499070328034</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1499070328034</updated>
+    </task>
+    <task id="LOCAL-00041" summary="New crass version&#10;fixed whiteoutblank">
+      <created>1502959205509</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1502959205509</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.114072494" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25641027" sideWeight="0.17324094" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2664437" sideWeight="0.82675904" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17502788" sideWeight="0.78198296" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39910814" sideWeight="0.4936034" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21987315" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="- expand travis.yml" />
+    <MESSAGE value="- fixed code (531)" />
+    <MESSAGE value="- fixed class naming with CamelCases" />
+    <MESSAGE value="- deleted plot-function" />
+    <MESSAGE value="Merge branch 'master' of https://github.com/UB-Mannheim/crass&#10;&#10;# Conflicts:&#10;#&#9;crass.py" />
+    <MESSAGE value="- fixed start parameters" />
+    <MESSAGE value="README: fixed example" />
+    <MESSAGE value="Added function: imgmask" />
+    <MESSAGE value="fixed function: whiteout-ramp" />
+    <MESSAGE value="try to fix travis" />
+    <MESSAGE value="-- added function: croptype()&#10;You can choose what segtype to be cropped out" />
+    <MESSAGE value="-- added infotext output: deskew, coords and splice" />
+    <MESSAGE value="-- Release version" />
+    <MESSAGE value="-- fixed normpath" />
+    <MESSAGE value="-- fixed normpath?" />
+    <MESSAGE value="-- fixed normpcase for win" />
+    <MESSAGE value="-- changed all path to unix + normcase for win" />
+    <MESSAGE value="-- changed all path to unix-form and addes nomnumber (number of quantities of the imagenomenclature for spliced images: 000x..)" />
+    <MESSAGE value="-- changed all path to unix-form (hopefully!)" />
+    <MESSAGE value="-- forget to delete print" />
+    <MESSAGE value="-- working version" />
+    <MESSAGE value="-- add new function &quot;whiteout-blank&quot;" />
+    <MESSAGE value="-- commit before pull" />
+    <MESSAGE value="Commit to pull" />
+    <MESSAGE value="New crass version&#10;fixed whiteoutblank" />
+    <option name="LAST_COMMIT_MESSAGE" value="New crass version&#10;fixed whiteoutblank" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="48" />
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="self.name" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="1219">
+            <caret line="53" column="24" lean-forward="true" selection-start-line="53" selection-start-column="24" selection-end-line="53" selection-end-column="24" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/argparse_config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="9" lean-forward="true" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md" />
+    <entry file="file://C:/ProgramData/Anaconda2/Lib/logging/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/doc/basic-concepts.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="303">
+            <caret line="56" column="59" lean-forward="true" selection-start-line="56" selection-start-column="59" selection-end-line="56" selection-end-column="59" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/doc/image-processing.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="194">
+            <caret line="10" column="16" lean-forward="false" selection-start-line="10" selection-start-column="16" selection-end-line="10" selection-end-column="16" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/argparse_config">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="28" lean-forward="false" selection-start-line="0" selection-start-column="28" selection-end-line="0" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/LICENSE">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Scripts/conda-script.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Scripts/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="276">
+          <caret line="27" column="0" lean-forward="true" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build/scripts-2.7/crass.py" />
+    <entry file="file://$PROJECT_DIR$/.travis.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="644">
+          <caret line="28" column="25" lean-forward="false" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="161">
+          <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/Pillow-4.0.0-py2.7.egg-info/PKG-INFO">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="17" column="8" lean-forward="true" selection-start-line="17" selection-start-column="8" selection-end-line="17" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://U:/Eigene Dokumente/Literatur/Hilfestellungen/Installationen.md" />
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/skimage/io/_plugins/pil_plugin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="578">
+          <caret line="54" column="16" lean-forward="false" selection-start-line="54" selection-start-column="16" selection-end-line="54" selection-end-column="93" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/PIL/Jpeg2KImagePlugin.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="13" column="1" lean-forward="false" selection-start-line="13" selection-start-column="1" selection-end-line="13" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/Pillow-4.0.0-py2.7.egg-info/requires.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/Pillow-4.0.0-py2.7.egg-info/SOURCES.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="613">
+          <caret line="81" column="17" lean-forward="false" selection-start-line="81" selection-start-column="17" selection-end-line="81" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/Anaconda2local/Lib/site-packages/Pillow-4.0.0-py2.7.egg-info/dependency_links.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="469">
+            <caret line="67" column="0" lean-forward="true" selection-start-line="67" selection-start-column="0" selection-end-line="67" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="13" column="0" lean-forward="false" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass_utest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="184">
+          <caret line="8" column="15" lean-forward="true" selection-start-line="8" selection-start-column="15" selection-end-line="8" selection-end-column="15" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crass.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="35" column="121" lean-forward="false" selection-start-line="35" selection-start-column="121" selection-end-line="35" selection-end-column="121" />
+          <folding>
+            <element signature="e#333#348#0" expanded="true" />
+            <element signature="e#8963#9242#0" expanded="false" />
+            <element signature="e#9268#9669#0" expanded="false" />
+            <element signature="e#9695#10088#0" expanded="false" />
+            <element signature="e#10115#10287#0" expanded="false" />
+            <element signature="e#10384#10561#0" expanded="false" />
+            <element signature="e#10641#20375#0" expanded="false" />
+            <element signature="e#20402#22096#0" expanded="false" />
+            <element signature="e#22139#24646#0" expanded="false" />
+            <element signature="e#24681#24890#0" expanded="false" />
+            <element signature="e#24922#25253#0" expanded="false" />
+            <element signature="e#25334#25388#0" expanded="false" />
+            <element signature="e#25421#25631#0" expanded="false" />
+            <element signature="e#25661#26084#0" expanded="false" />
+            <element signature="e#26108#26135#0" expanded="false" />
+            <element signature="e#26206#31566#0" expanded="false" />
+            <element signature="e#31628#32419#0" expanded="false" />
+            <element signature="e#32460#32601#0" expanded="false" />
+            <element signature="e#32634#37909#0" expanded="false" />
+            <element signature="e#37953#38414#0" expanded="false" />
+            <element signature="e#38475#38926#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <last-edited>Unnamed</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

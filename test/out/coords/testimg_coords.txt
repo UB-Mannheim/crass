@@ -1,0 +1,6 @@
+Image resolution:	764	1166
+Header:  	0	101	0	1166
+C-Seg: 	108	197	74	948
+A-Seg:	192	543	74	512
+B-Seg:	192	543	510	949
+Footer:  	537	764	0	1166
