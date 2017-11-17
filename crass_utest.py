@@ -1,4 +1,4 @@
-import crass
+from crass import crass
 from pyannotate_runtime import collect_types
 
 if __name__ == '__main__':
@@ -6,4 +6,4 @@ if __name__ == '__main__':
     collect_types.resume()
     crass()
     collect_types.pause()
-collect_types.dump_stats('type_info.json')
+collect_types.dump_stats('C:/Users/jkamlah/Desktop/ShareVB/test/type_info.json')
