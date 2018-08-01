@@ -33,7 +33,9 @@ def get_parser():
     #parser.add_argument("input", type=str,help='Input file or folder')
     #parser.add_argument("input", type=str, default="C:\\Users\\jkamlah\\Desktop\\crassWeil\\0279.jpg",
     #                    help='Input file or folder')
-    parser.add_argument("--input", type=str,default="/media/sf_ShareVB/test_jpf/495766682_0816.jpg",
+    #parser.add_argument("--input", type=str,default="/media/sf_ShareVB/test_jpf/495766682_0816.jpg",
+    #                    help='Input file or folder')
+    parser.add_argument("--input", type=str, default="/media/sf_ShareVB/Gemeindeverzeichnisse/splice/497570904_19460001/",
                         help='Input file or folder')
 
     parser.add_argument("--extension", type=str, choices=["bmp","jpg","png","tif"], default="jpg", help='Extension of the files, default: %(default)s')
@@ -42,7 +44,7 @@ def get_parser():
     parser.add_argument('-a', '--addstopheightab', type=float, default=0.011, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segments a&b (stopheight), default: %(default)s')
     parser.add_argument('-C', '--addstartheightc', type=float, default=-0.005, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (startheight), default: %(default)s')
     parser.add_argument('-c', '--addstopheightc', type=float, default=0.0, choices=np.arange(-1.0, 1.0),help='Add some pixel for the clipping mask of segment c (stopheight), default: %(default)s')
-    parser.add_argument('--bgcolor', type=int, default=0,help='Backgroundcolor of the splice image (for "uint8": 0=black,...255=white): %(default)s')
+    parser.add_argument('--bgcolor', type=int, default=1,help='Backgroundcolor of the splice image (for "uint8": 0=black,...255=white): %(default)s')
     parser.add_argument('--crop', action="store_false", help='cropping paper into segments')
     parser.add_argument("--croptypes", type=str, nargs='+', choices=['a', 'b', 'c', 'f', 'h'],
                         default=['a', 'b', 'c', 'f', 'h'],
@@ -61,7 +63,7 @@ def get_parser():
     parser.add_argument("--imgmask", type=float, nargs=4, default=[0.0,1.0,0.0,1.0], help='Set a mask that only a specific part of the image will be computed, arguments =  Heightstart, Heightend, Widthstart, Widthend')
     parser.add_argument('--minwidthmask', type=float, default=0.06, choices=np.arange(0, 0.5),
                         help='min widthdistance of all masks, default: %(default)s')
-    parser.add_argument('--minwidthhor', type=float, default=0.3, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
+    parser.add_argument('--minwidthhor', type=float, default=0.1, choices=np.arange(0, 1.0), help='minwidth of the horizontal lines, default: %(default)s')
     parser.add_argument('--maxwidthhor', type=float, default=0.95,choices=np.arange(-1.0, 1.0), help='maxwidth of the horizontal lines, default: %(default)s')
     parser.add_argument('--minheighthor', type=float, default=0.00, choices=np.arange(0, 1.0), help='minheight of the horizontal lines, default: %(default)s')
     parser.add_argument('--maxheighthor', type=float, default=0.95, choices=np.arange(0, 1.0), help='maxheight of the horizontal lines, default: %(default)s')
@@ -78,7 +80,7 @@ def get_parser():
     parser.add_argument('--minsizeblank', type=float, default=0.015, choices=np.arange(0, 1.0), help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--minsizeblankobolustop', type=float, default=0.014, choices=np.arange(0, 1.0),help='min size of the blank area between to vertical lines, default: %(default)s')
     parser.add_argument('--nomnumber', type=int, default=4,help='Sets the quantity of numbers in the nomenclature (for "4": 000x_imagename): %(default)s')
-    parser.add_argument('--parallel', type=int, default=3, help="number of CPUs to use, default: %(default)s")
+    parser.add_argument('--parallel', type=int, default=1, help="number of CPUs to use, default: %(default)s")
     parser.add_argument('--ramp', default=None, help='activates the function whiteout')
     parser.add_argument('--adaptingmasksoff', action="store_true", help='deactivates adapting maskalgorithm')
     parser.add_argument('--showmasks', action="store_false", help='output an image with colored masks')
@@ -302,6 +304,7 @@ def crop(args, image, image_param, labels,list_linecoords, clippingmask):
     coordstxt.close()
     return 0
 
+
 def cropping(input):
     # Main cropping function that deskew, analyse and crops the image
     # read image
@@ -348,7 +351,24 @@ def deskew(args,image, image_param):
     # Deskew the given image based on the horizontal line
     # Calculate the angle of the points between 20% and 80% of the line
     uintimage = get_uintimg(image)
+
+    CUT_WHITE = True
+    if CUT_WHITE:
+        white_arr = np.array(uintimage).sum(axis=0)-65535*image_param.height
+        white_arr[-1] = 0
+        first_white_col = min(np.where(white_arr == 0)[0])
+        create_dir(image_param.pathout + os.path.normcase("/cutwhite/"))
+        deskew_path = "%s.%s" % (image_param.pathout + os.path.normcase("/cutwhite/") + image_param.name, args.extension)
+        misc.imsave(deskew_path, image[:,:first_white_col])
+        return
+
     binary = get_binary(args, uintimage)
+    ENLARGE =False
+    if ENLARGE:
+        #binary = ski.morphology.skeletonize(binary)
+        binary = ski.morphology.binary_dilation(binary,selem=np.ones((3, 3)))
+        binary = ski.morphology.binary_dilation(binary, selem=np.ones((3, 3)))
+        binary = ski.morphology.binary_dilation(binary, selem=np.ones((3, 3)))
     labels, numl = measurements.label(binary)
     objects = measurements.find_objects(labels)
     deskew_path = None
@@ -359,25 +379,31 @@ def deskew(args,image, image_param):
         if int(args.minwidthhor * image_param.width) < get_width(b) < int(args.maxwidthhor * image_param.width) \
                 and int(image_param.height * args.minheighthor) < get_height(b) < int(image_param.height * args.maxheighthor) \
                 and int(image_param.height * args.minheighthormask) < (linecoords.height_start+linecoords.height_stop)/2 < int(image_param.height * args.maxheighthormask) \
-                and linecoords.height_start != 0:
+                and linecoords.height_start != 0 and linecoords.width_start < 500:
 
             pixelwidth = set_pixelground(binary[b].shape[1])
             arr = np.arange(1, pixelwidth(args.deskewlinesize) + 1)
             mean_y = []
             #Calculate the mean value for every y-array
+            old_start = None
             for idx in range(pixelwidth(args.deskewlinesize)):
                 value_y = measurements.find_objects(labels[b][:, idx + pixelwidth((1.0-args.deskewlinesize)/2)] == i + 1)[0]
+                if old_start is None:
+                    old_start = value_y[0].start
                 #mean_y.append((value_y[0].stop + value_y[0].start) / 2)
-                mean_y.append(value_y[0].start)
-            polyfit_value = np.polyfit(arr, mean_y, 1)
+                if abs(value_y[0].start-old_start) < 5:
+                    mean_y.append(value_y[0].start)
+                    old_start = value_y[0].start
+            #stuff = range(1, len(mean_y) - 1)
+            polyfit_value = np.polyfit(range(0,len(mean_y)), mean_y, 1)
             deskewangle = np.arctan(polyfit_value[0]) * (360 / (2 * np.pi))
             args.ramp = True
             deskew_image = transform.rotate(image, deskewangle, mode="edge")
             create_dir(image_param.pathout+os.path.normcase("/deskew/"))
             deskew_path = "%s_deskew.%s" % (image_param.pathout+os.path.normcase("/deskew/")+image_param.name, args.extension)
-            deskewinfo = open(image_param.pathout+os.path.normcase("/deskew/")+image_param.name + "_deskewangle.txt", "w")
-            deskewinfo.write("Deskewangle:\t%f" % deskewangle)
-            deskewinfo.close()
+            #deskewinfo = open(image_param.pathout+os.path.normcase("/deskew/")+image_param.name + "_deskewangle.txt", "w")
+            #deskewinfo.write("Deskewangle:\t%f" % deskewangle)
+            #deskewinfo.close()
             image_param.deskewpath = deskew_path
             with warnings.catch_warnings():
                 #Transform rotate convert the img to float and save convert it back
@@ -386,6 +412,11 @@ def deskew(args,image, image_param):
                 if not args.deskewandsplit:
                     uintimage = get_uintimg(deskew_image)
                     binary = get_binary(args, uintimage)
+                    if ENLARGE:
+                        # binary = ski.morphology.skeletonize(binary)
+                        binary = ski.morphology.binary_dilation(binary, selem=np.ones((3, 3)))
+                        binary = ski.morphology.binary_dilation(binary, selem=np.ones((3, 3)))
+                        binary = ski.morphology.binary_dilation(binary, selem=np.ones((3, 3)))
                     labels, numl = measurements.label(binary)
                     objects = measurements.find_objects(labels)
                     for i, b in enumerate(objects):
@@ -397,22 +428,39 @@ def deskew(args,image, image_param):
                             and int(image_param.height * args.minheighthormask) < (
                             linecoords.height_start + linecoords.height_stop) / 2 < int(
                         image_param.height * args.maxheighthormask) \
-                            and linecoords.height_start != 0:
+                            and linecoords.height_start != 0 and linecoords.width_start < 500:
                             new_linecoords = objects[i]
                     #realpart = np.cos(np.radians(deskewangle))
                     #shift = linecoords.width_start*realpart
                             linecoords.width_start = new_linecoords[1].start
                             linecoords.width_stop = new_linecoords[1].stop
-                            splitpoint = linecoords.width_start+(get_width(b)/2)
-                            SPLIT, SPLICE = False, True
+                            table_width = 2700
+                            max_table_diff = 200 #200 default
+                            SPLIT, SPLICE = False,True
+                            spliceparts = 3
+                            spliceoffset= 10
                             if SPLIT:
                                 misc.imsave("%s_deskew_01.%s" % (image_param.pathout+os.path.normcase("/deskew/")+image_param.name, args.extension), deskew_image[:,:splitpoint+10])
                                 misc.imsave("%s_deskew_02.%s" % (image_param.pathout+os.path.normcase("/deskew/")+image_param.name, args.extension), deskew_image[:,splitpoint-10:])
                             if SPLICE:
-                                spliced_image = np.ones((image_param.height*2, image_param.width, 3)) * args.bgcolor
-                                spliced_image[:image_param.height, :splitpoint + 10] = deskew_image[:, :splitpoint + 10]
-                                spliced_image[image_param.height:, :image_param.width-splitpoint+10] = deskew_image[:, (splitpoint - 10):]
-                                misc.imsave("%s_deskew_merge.%s" % (image_param.pathout + os.path.normcase("/deskew/") + image_param.name, args.extension),spliced_image)
+                                col_width = (get_width(b) / spliceparts)
+                                splitpoint = linecoords.width_start + (col_width)
+                                if abs((get_width(b) / spliceparts) - table_width) > max_table_diff:
+                                    col_width = (table_width / spliceparts)
+                                    if linecoords.width_start < image_param.width * 0.2:
+                                        splitpoint = linecoords.width_start + col_width
+                                    else:
+                                        splitpoint = linecoords.width_stop - (col_width*(spliceparts-1))
+                                spliced_image = np.ones((image_param.height * spliceparts, image_param.width, 3)) * args.bgcolor
+                                startpoint = spliceoffset
+                                for part in range(1,spliceparts+1):
+                                    if part == spliceparts:
+                                        splitpoint = image_param.width-spliceoffset
+                                    spliced_image[image_param.height*(part-1):image_param.height*part,:(splitpoint + spliceoffset)-(startpoint-spliceoffset)] = deskew_image[:,(startpoint-spliceoffset):(splitpoint + spliceoffset)]
+                                    startpoint = splitpoint - spliceoffset
+                                    splitpoint += col_width
+                                misc.imsave("%s_deskew_merge.%s" % (image_param.pathout + os.path.normcase("/deskew/") + image_param.name, args.extension), spliced_image)
+                            break
             break
 
     return deskew_path
@@ -702,7 +750,7 @@ def crass():
         # chunksize = 1 every multiprocess gets exact the next free image (sorted order)
         pool.map(cropping, inputfiles,chunksize=1)
     ####################### SPLICE #######################################
-    if args.splice == True:
+    if not args.splice == True:
         if not args.splicemaintype in args.splicetypes:
                 print("%s is not part of the pattern %s" % (args.splicemaintype,args.splicetypes))
                 logging.warning("Input error by user!")
