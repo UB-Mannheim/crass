@@ -560,7 +560,7 @@ def linecoords_analyse(args,origimg, image_param, clippingmask):
             # Distance Calculation - defining the clippingmask
             border = get_mindist(b, image_param.width)
             topline_width_stop = b[0].stop + 2 # Lowest Point of object + 2 Pixel
-            if clippingmask.user == None:
+            if clippingmask.user is None:
                 clippingmask.width_start = border
                 clippingmask.width_stop = image_param.width - border
                 clippingmask.height_start = copy.deepcopy(topline_width_stop)
