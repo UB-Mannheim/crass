@@ -61,7 +61,7 @@ Further Information
 -------------------
 
 You can find more information on the [basic concepts][basic-link] and the
-[image processing][2] in the available documentation.
+[image processing][img-link] in the available documentation.
 
 Originally written by Jan Kamlah.
 
