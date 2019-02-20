@@ -1,15 +1,15 @@
-![crass logo](doc/img/crass_logo.png)
-crop and splice segments
-========================
+![crass logo](doc/img/crass_logo.png)  
+crop and splice segments  
+========================  
 [![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/jkamlah/UB-Mannheim/crass)
 ![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)
 
-Originally written by Jan Kamlah.
 
 Overview
 --------
 
-`crass` is a command line driven post-processing tool for scanned sheets of paper.
+`crass` is part of the [Aktienführer-Datenarchiv work process][akf-link]. 
+It is a command line driven post-processing tool for scanned sheets of paper.
 The main purpose is to crop segments based on separator lines and splice them afterwards
 together in a certain order. In an additional preprocessing step, `crass` might detect
 the rotation of the page and will rotate it to the correct
@@ -60,8 +60,11 @@ containing the final spliced image.
 Further Information
 -------------------
 
-You can find more information on the [basic concepts][1] and the
+You can find more information on the [basic concepts][basic-link] and the
 [image processing][2] in the available documentation.
 
-[1]: doc/basic-concepts.md
-[2]: doc/image-processing.md
+Originally written by Jan Kamlah.
+
+[akf-link]: https://digi.bib.uni-mannheim.de/aktienfuehrer/
+[basic-link]: doc/basic-concepts.md
+[img-link]: doc/image-processing.md
