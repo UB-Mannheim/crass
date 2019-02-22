@@ -1,4 +1,4 @@
-![crass logo](doc/img/crass_logo.png)  
+![crass logo](docs/img/crass_logo.png)  
 crop and splice segments  
 ========================  
 [![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/jkamlah/UB-Mannheim/crass)
@@ -67,6 +67,6 @@ You can find more information on the [basic concepts][basic-link] and the
 
 Originally written by Jan Kamlah.
 
-[akf-link]: https://digi.bib.uni-mannheim.de/aktienfuehrer/
-[basic-link]: doc/basic-concepts.md
-[img-link]: doc/image-processing.md
+[akf-link]:  https://github.com/UB-Mannheim/Aktienfuehrer-Datenarchiv-Tools
+[basic-link]: docs/basic-concepts.md
+[img-link]: docs/image-processing.md
