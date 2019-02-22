@@ -8,12 +8,14 @@ crop and splice segments
 Overview
 --------
 
-`crass` is part of the [Aktienführer-Datenarchiv work process][akf-link]. 
-It is a command line driven post-processing tool for scanned sheets of paper.
+**Crass** is a command line driven post-processing tool for scanned sheets of paper.
 The main purpose is to crop segments based on separator lines and splice them afterwards
 together in a certain order. In an additional preprocessing step, `crass` might detect
 the rotation of the page and will rotate it to the correct
 angle. This process is called "deskewing".
+It is part of the [Aktienführer-Datenarchiv work process][akf-link],
+but can also be used independently.
+
 
 Note that the automatic processing will sometimes fail. It is always a
 good idea to manually control the results of `crass` and adjust the
