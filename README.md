@@ -65,7 +65,15 @@ Further Information
 You can find more information on the [basic concepts][basic-link] and the
 [image processing][img-link] in the available documentation.
 
-Originally written by Jan Kamlah.
+Copyright and License
+----
+
+Copyright (c) 2013 – 2018 Universitätsbibliothek Mannheim
+
+Author: [Jan Kamlah](https://github.com/jkamlah)
+
+**crass** is Free Software. You may use it under the terms of the Apache 2.0 License.
+See [LICENSE](./LICENSE) for details.
 
 [akf-link]:  https://github.com/UB-Mannheim/Aktienfuehrer-Datenarchiv-Tools
 [basic-link]: docs/basic-concepts.md
