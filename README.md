@@ -68,7 +68,7 @@ You can find more information on the [basic concepts][basic-link] and the
 Copyright and License
 ----
 
-Copyright (c) 2013 – 2018 Universitätsbibliothek Mannheim
+Copyright (c) 2017 Universitätsbibliothek Mannheim
 
 Author: [Jan Kamlah](https://github.com/jkamlah)
 
