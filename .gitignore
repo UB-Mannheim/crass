@@ -1,2 +1,4 @@
 *.jpg
 *.txt
+*.pyc
+.idea/

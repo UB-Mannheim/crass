@@ -1,14 +1,14 @@
 ![crass logo](docs/img/crass_logo.png)  
 crop and splice segments  
 ========================  
-[![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/jkamlah/UB-Mannheim/crass)
+[![Build Status](https://travis-ci.org/UB-Mannheim/crass.svg?branch=master)](https://travis-ci.org/UB-Mannheim/crass)
 ![license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg)
 
 
 Overview
 --------
 
-**Crass** is a command line driven post-processing tool for scanned sheets of paper.
+**crass** is a command line driven post-processing tool for scanned sheets of paper.
 The main purpose is to crop segments based on separator lines and splice them afterwards
 together in a certain order. In an additional preprocessing step, `crass` might detect
 the rotation of the page and will rotate it to the correct
