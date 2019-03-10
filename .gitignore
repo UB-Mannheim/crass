@@ -1,4 +1,9 @@
-*.jpg
-*.txt
+test/*.jpg
+!test/testimg*.jpg
+test/out/**/*.jpg
+!test/out/**/*testimg*.jpg
+test/out/**/*.txt
+!test/out/**/*testimg*.txt
 *.pyc
 .idea/
+crass_env/

@@ -1,1 +1,1 @@
-Deskewangle:	0
+Deskewangle:	0.000000
