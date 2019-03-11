@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 ###################### INFORMATION ##############################
 #          crass-Addin to crop and splice segments of an image
 #          optional preprocess: deskew

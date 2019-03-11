@@ -1,6 +1,10 @@
 Image Processing Features
 =========================
 
+The automatic processing will sometimes fail with the standard parameter settings. It is always a
+good idea to manually control the results of `crass` and adjust the
+parameter settings according to the requirements of the input.
+
 ## Processing Order
 
 Processing of the filters and auto-corrections is performed in a fixed
