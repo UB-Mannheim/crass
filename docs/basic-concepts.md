@@ -2,24 +2,24 @@ Basic Concepts
 ==============
 
 The very basic object `crass` operates on is a **page** with **separator
-lines**. First the **page** will be cropped into **segments** based on the 
-**separator lines** and afterwards spliced together to a new image. 
-There must be at least one vertical and one horizontal line that the code 
+lines**. First the **page** will be cropped into **segments** based on the
+**separator lines** and afterwards spliced together to a new image.
+There must be at least one vertical and one horizontal line that the code
 runs correctly. In an additionally preprocessing step, `crass` might detect
-the rotation of the page and will rotating it to the correct angle. 
+the rotation of the page and will rotating it to the correct angle.
 This process is called **"deskewing"**.
 
 ![Sheets and Pages](img/basic_concept.png)
 
 ## Input and Output Image Files
 
-`crass` can process either one **page** or a **folder** containing several 
-pages with the same extension. The output files will have the same extension 
+`crass` can process either one **page** or a **folder** containing several
+pages with the same extension. The output files will have the same extension
 as the inputs ones.
 
-By default, `crass` places the single segments and the debuginformation-images 
-into the directory "out/..".   
-The subdirectory "out/spliced/.." will contain the final spliced images. 
+By default, `crass` places the single segments and the debug information resp. images
+into the directory "out/..", e.g.
+the subdirectory "out/spliced/.." will contain the final spliced images.
 
 ### File Formats
 
@@ -36,7 +36,7 @@ The *image-file* format accepted by `crass` is *jpg*.
 
 ### Line Analyse
 1. Find the top or bottom horizontal line.
-1. Finds all vertical lines in the middle (by default) of the page.
+2. Finds all vertical lines in the middle (by default) of the page.
 
 ![Deskew](img/basic_concept_line_analyse.png)
 
@@ -48,16 +48,18 @@ The *image-file* format accepted by `crass` is *jpg*.
         - b = right side separated by a vertical line
         - c = space between header and vertical line or vertical line and another vertical line
         - f = footer
-2. Crop the single segments 
+2. Crop the single segments
     (by default: the footer and header information will also be stored)
     
 ![Crop](img/basic_concept_crop.png)
 
 ### Splice
-1. Splice the single segments according to a certain order.
-    (by default, a then b then a ... till a c segments forms the end)
+1. Splice the single segments according to a certain order
+    (by default, a then b then a etc. until a c segments forms the end).
     
 ![Splice](img/basic_concept_splice.png)
+
+## Further Information
 
 You can find more detailed information about the single steps and setting
 options in the [image processing][1] documentation.
