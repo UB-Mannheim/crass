@@ -3,4 +3,4 @@ scipy>=0.19
 matplotlib>=1.4.3
 Pillow>=2.7.0
 lxml>=3.5.0
-scikit-image >= 0.13
+scikit-image >= 0.14.2
